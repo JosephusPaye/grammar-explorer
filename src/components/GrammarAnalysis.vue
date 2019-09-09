@@ -9,9 +9,15 @@
       >
 
       <div class="mb-6">
-        <label class="mr-4 cursor-pointer"><input type="checkbox" v-model="filterLeftRecursion"> Left Recursion</label>
-        <label class="mr-4 cursor-pointer"><input type="checkbox" v-model="filterRightRecursion"> Right Recursion</label>
-        <label class="mr-4 cursor-pointer"><input type="checkbox" v-model="filterCommonPrefix"> Common Prefix</label>
+        <label class="mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterLeftRecursion"> Left Recursion
+        </label>
+        <label class="mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterRightRecursion"> Right Recursion
+        </label>
+        <label class="mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterCommonPrefix"> Common Prefix
+        </label>
       </div>
 
       <div class="p-8 text-gray-600 text-lg text-center border" v-if="nonTerminals.length === 0">
@@ -23,16 +29,26 @@
         :key="nonTerminal.value + nonTerminal.id"
         v-for="nonTerminal in nonTerminals"
       >
-        <div class="w-40 font-mono p-2 bg-blue-600 text-white">
+        <div class="w-40 font-mono p-2 bg-blue-600 text-white flex-shrink-0">
           {{ nonTerminal.value }}
         </div>
         <ui-tabs class="w-full border border-gray-800" compact>
           <ui-tab
+            :key="nonTerminal.value + index"
             :selected="index === 0"
             :label="tab.label"
+
             v-for="(tab, index) in nonTerminal.tabs"
           >
-            <div class="py-2 px-2 font-mono" v-html="tab.content"></div>
+            <div class="py-2 px-2 overflow-x-auto font-mono" style="width: calc((100vw / 2) - 202px)">
+              <div v-if="tab.type === 'text'">{{ tab.content }}</div>
+              <ui-prefix
+                :has-groups="tab.hasCommonPrefixes"
+                :groups="tab.commonPrefixes"
+
+                v-else-if="tab.type === 'prefixes'"
+              ></ui-prefix>
+            </div>
           </ui-tab>
         </ui-tabs>
       </div>
@@ -45,14 +61,20 @@
 </template>
 
 <script>
-import { escapeTags } from '../grammar'
+import UiPrefix from './UiPrefix.vue'
 import UiTabs from './UiTabs.vue'
 import UiTab from './UiTab.vue'
+
+let currentId = 0
+function nextId() {
+  return currentId++
+}
 
 export default {
   name: 'GrammarAnalysis',
 
   components: {
+    UiPrefix,
     UiTabs,
     UiTab
   },
@@ -87,24 +109,29 @@ export default {
             value: nonTerminal.value,
             tabs: [
               {
+                id: nextId(),
                 label: nonTerminal.isLeftRecursive
                   ? 'Left Recursion ✅'
                   : 'Left Recursion ❌',
+                type: 'text',
                 content: nonTerminal.isLeftRecursive
-                  ? escapeTags(nonTerminal.leftRecursionPath)
+                  ? nonTerminal.leftRecursionPath
                   : 'None',
               },
               {
+                id: nextId(),
                 label: 'Right Recursion',
+                type: 'text',
                 content: 'Not implemented'
               },
               {
-                label: nonTerminal.hasCommonPrefix
+                id: nextId(),
+                label: nonTerminal.hasCommonPrefixes
                   ? 'Common Prefix ✅'
                   : 'Common Prefix ❌',
-                content: nonTerminal.hasCommonPrefix
-                  ? nonTerminal.commonPrefix.html.join('<br>')
-                  : 'None',
+                type: 'prefixes',
+                hasCommonPrefixes: nonTerminal.hasCommonPrefixes,
+                commonPrefixes: nonTerminal.commonPrefixes,
               }
             ]
           }
@@ -126,7 +153,7 @@ export default {
         return false
       }
 
-      if (this.filterCommonPrefix && !nonTerminal.hasCommonPrefix) {
+      if (this.filterCommonPrefix && !nonTerminal.hasCommonPrefixes) {
         return false
       }
 

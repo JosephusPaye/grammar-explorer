@@ -9,7 +9,7 @@ export class NonTerminal {
     this.id = nextId()
     this.value = value
     this.isLeftRecursive = false
-    this.hasCommonPrefix = false
+    this.hasCommonPrefixes = false
     this.productions = []
   }
 }
@@ -212,43 +212,59 @@ function hasLeftRecursion(targetNonTerminal, currentNonTerminal, visited, path) 
 
 function checkForCommonPrefix(grammar) {
   Object.values(grammar).forEach(nonTerminal => {
-    nonTerminal.productions.some(productionA => {
-      return nonTerminal.productions.some(productionB => {
-        if (productionA === productionB) {
+    let allOptions = []
+
+    nonTerminal.productions.forEach(production => {
+      allOptions = allOptions.concat(production.options)
+    })
+
+    let hasCommonPrefixes = false
+    const commonPrefixes = {}
+
+    allOptions.forEach(optionA => {
+      return allOptions.forEach(optionB => {
+        if (optionA === optionB) {
           return
         }
 
-        const prefix = getCommonPrefix(productionA, productionB)
+        const prefix = getCommonPrefix(optionA, optionB)
 
         if (prefix) {
-          nonTerminal.hasCommonPrefix = true
-          nonTerminal.commonPrefix = prefix
-          return true
+          hasCommonPrefixes = true
+          createOrAppendPrefix(commonPrefixes, prefix)
         }
       })
     })
+
+    if (hasCommonPrefixes) {
+      nonTerminal.hasCommonPrefixes = true
+      nonTerminal.commonPrefixes = Object.values(commonPrefixes)
+        .map(prefix => {
+          return {
+            common: prefix.common,
+            sources: prefix.sources,
+          }
+        })
+    }
   })
 }
 
-function getCommonPrefix(productionA, productionB) {
-  const firstOptionA = productionA.options[0]
-  const firstOptionB = productionB.options[0]
-
-  if (firstOptionA === undefined || firstOptionB === undefined) {
-    return ''
+function getCommonPrefix(optionA, optionB) {
+  if (optionA === undefined || optionB === undefined) {
+    return null
   }
 
-  const aSource = firstOptionA.elements.map(e => e.value).join(' ')
-  const bSource = firstOptionB.elements.map(e => e.value).join(' ')
+  const aSource = optionA.elements.map(e => e.value).join(' ')
+  const bSource = optionB.elements.map(e => e.value).join(' ')
   let common = ''
 
-  for (let i = 0; i < firstOptionA.elements.length; i++) {
-    if (i >= firstOptionB.elements.length) {
+  for (let i = 0; i < optionA.elements.length; i++) {
+    if (i >= optionB.elements.length) {
       break;
     }
 
-    const elementA = firstOptionA.elements[i]
-    const elementB = firstOptionB.elements[i]
+    const elementA = optionA.elements[i]
+    const elementB = optionB.elements[i]
 
     if (elementA.value === elementB.value) {
       common += elementA.value + ' '
@@ -261,19 +277,27 @@ function getCommonPrefix(productionA, productionB) {
     return null
   }
 
-  const all = [aSource, bSource]
+  const sources = [aSource, bSource]
 
   return {
-    all,
     common,
-    html: all.map(source => {
-      return source.replace(common.trim(), `<mark>${escapeTags(common.trim())}</mark>`)
-    })
+    sources,
   }
 }
 
-export function escapeTags(string) {
-  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+function createOrAppendPrefix(allPrefixes, newPrefix) {
+  const prefixList = allPrefixes[newPrefix.common] || {
+    common: newPrefix.common,
+    sources: []
+  }
+
+  newPrefix.sources
+    .filter(newSource => prefixList.sources.includes(newSource) === false)
+    .forEach(newSource => {
+      prefixList.sources.push(newSource)
+    })
+
+  allPrefixes[newPrefix.common] = prefixList
 }
 
 export const CD19 = `
@@ -339,7 +363,6 @@ export const CD19 = `
 <reallit> ::= \\d.\\d
 <string> ::= ".*"
 `.trim()
-
 
 function test() {
   const g = `
