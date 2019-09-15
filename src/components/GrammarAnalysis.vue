@@ -43,8 +43,7 @@
             <div class="py-2 px-2 overflow-x-auto font-mono" style="width: calc((100vw / 2) - 202px)">
               <div v-if="tab.type === 'text'">{{ tab.content }}</div>
               <ui-prefix
-                :has-groups="tab.hasCommonPrefixes"
-                :groups="tab.commonPrefixes"
+                :prefixes="tab.commonPrefixes"
 
                 v-else-if="tab.type === 'prefixes'"
               ></ui-prefix>
@@ -110,13 +109,11 @@ export default {
             tabs: [
               {
                 id: nextId(),
-                label: nonTerminal.isLeftRecursive
+                label: nonTerminal.leftRecursion.exists
                   ? 'Left Recursion ✅'
                   : 'Left Recursion ❌',
                 type: 'text',
-                content: nonTerminal.isLeftRecursive
-                  ? nonTerminal.leftRecursionPath
-                  : 'None',
+                content: nonTerminal.leftRecursion.path,
               },
               {
                 id: nextId(),
@@ -126,11 +123,10 @@ export default {
               },
               {
                 id: nextId(),
-                label: nonTerminal.hasCommonPrefixes
+                label: nonTerminal.commonPrefixes.exist
                   ? 'Common Prefix ✅'
                   : 'Common Prefix ❌',
                 type: 'prefixes',
-                hasCommonPrefixes: nonTerminal.hasCommonPrefixes,
                 commonPrefixes: nonTerminal.commonPrefixes,
               }
             ]
@@ -145,15 +141,15 @@ export default {
         return false
       }
 
-      if (this.filterLeftRecursion && !nonTerminal.isLeftRecursive) {
+      if (this.filterLeftRecursion && !nonTerminal.leftRecursion.exists) {
         return false
       }
 
-      if (this.filterRightRecursion && !nonTerminal.isRightRecursive) {
+      if (this.filterRightRecursion && !nonTerminal.rightRecursion.exists) {
         return false
       }
 
-      if (this.filterCommonPrefix && !nonTerminal.hasCommonPrefixes) {
+      if (this.filterCommonPrefix && !nonTerminal.commonPrefixes.exist) {
         return false
       }
 

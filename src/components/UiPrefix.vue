@@ -1,16 +1,22 @@
 <template>
-  <div class="prefix flex">
+  <div class="prefix">
     <template v-if="hasGroups">
-      <div
-        class="prefix-group border-r border-gray-300 pr-4 mr-4"
-        :class="['group-' + i]"
-        v-for="(group, i) in highlightedGroups"
-      >
-        <div v-for="source in group.sources" v-html="source" class="whitespace-no-wrap"></div>
+      <div class="flex">
+        <div
+          class="prefix-group border-r border-gray-300 pr-4 mr-4"
+          :class="['group-' + i]"
+          v-for="(group, i) in highlightedGroups"
+        >
+          <div v-for="source in group.sources" v-html="source" class="whitespace-no-wrap"></div>
+        </div>
       </div>
     </template>
 
     <div v-else>None</div>
+
+    <div v-if="warnings.length > 0" class="bg-gray-200 text-sm mt-2 p-2">
+      <div v-for="warning in warnings">⚠️ {{ warning }}</div>
+    </div>
   </div>
 </template>
 
@@ -23,14 +29,22 @@ export default {
   name: 'UiPrefix',
 
   props: {
-    hasGroups: Boolean,
-    groups: Array,
+    prefixes: Object,
   },
 
   computed: {
+    hasGroups() {
+      return this.prefixes.exist
+    },
+
+    groups() {
+      return this.prefixes.prefixes
+    },
+
     highlightedGroups() {
       return this.groups.map(group => {
         const common = group.common.trim()
+
         return {
           sources: group.sources.map(source => {
             return escapeTags(source.replace(common, '{{mark}}'))
@@ -38,6 +52,10 @@ export default {
           }),
         }
       })
+    },
+
+    warnings() {
+      return this.prefixes.warnings
     },
   }
 }

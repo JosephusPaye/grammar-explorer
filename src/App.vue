@@ -65,7 +65,7 @@ export default {
   methods: {
     parseGrammar() {
       try {
-        const grammar = parse(this.grammarText)
+        const grammar = parse(this.grammarText, 'input grammar')
         this.grammar = grammar
         this.grammarInvalid = false
       } catch (err) {

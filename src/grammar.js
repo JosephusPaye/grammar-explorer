@@ -1,15 +1,26 @@
-let currentId = 0;
+let currentId = 0
 
 function nextId() {
-  return currentId++;
+  return currentId++
 }
 
 export class NonTerminal {
   constructor(value = '') {
     this.id = nextId()
     this.value = value
-    this.isLeftRecursive = false
-    this.hasCommonPrefixes = false
+    this.leftRecursion = {
+      exists: false,
+      path: 'None',
+    }
+    this.rightRecursion = {
+      exists: false,
+      path: 'Not implemented',
+    }
+    this.commonPrefixes = {
+      exist: false,
+      prefixes: [],
+      warnings: [],
+    }
     this.productions = []
   }
 }
@@ -43,7 +54,7 @@ export class Epsilon {
   }
 }
 
-export function parse(text) {
+export function parse(text, label) {
   if (text.trim().length == 0) {
     return {}
   }
@@ -60,7 +71,7 @@ export function parse(text) {
       .map(parseOption)
 
     appendProduction(grammar, nonTerminal, production, options)
-  });
+  })
 
   Object.values(grammar).forEach(nonTerminal => {
     nonTerminal.productions.forEach(production => {
@@ -75,7 +86,10 @@ export function parse(text) {
   })
 
   checkForLeftRecursion(grammar)
+
+  console.groupCollapsed(label + ' common prefix check warnings')
   checkForCommonPrefix(grammar)
+  console.groupEnd(label)
 
   return grammar
 }
@@ -115,7 +129,7 @@ function parseElement(source) {
     return [new Terminal(source)]
   }
 
-  const elementArr = source.split('');
+  const elementArr = source.split('')
   const elements = []
 
   while (elementArr.length > 0) {
@@ -148,7 +162,7 @@ function extractTerminalFromElement(current, elementArr) {
 }
 
 function extractNonTerminalFromElement(current, elementArr) {
-  let nonTerminal = current;
+  let nonTerminal = current
 
   while (elementArr.length > 0) {
     if (elementArr[0] == '>') {
@@ -187,8 +201,8 @@ function hasLeftRecursion(targetNonTerminal, currentNonTerminal, visited, path) 
       const leftNonTerminal = option.elements[0]
 
       if (leftNonTerminal === targetNonTerminal) {
-        targetNonTerminal.isLeftRecursive = true
-        targetNonTerminal.leftRecursionPath = `${newPath} → ${targetNonTerminal.value}`
+        targetNonTerminal.leftRecursion.exists = true
+        targetNonTerminal.leftRecursion.path = `${newPath} → ${targetNonTerminal.value}`
         return true
       } else {
         leftNonTerminals.push(leftNonTerminal)
@@ -221,13 +235,18 @@ function checkForCommonPrefix(grammar) {
     let hasCommonPrefixes = false
     const commonPrefixes = {}
 
+    let allWarnings = []
+    const reportedWarnings = new Set()
+
     allOptions.forEach(optionA => {
       return allOptions.forEach(optionB => {
         if (optionA === optionB) {
           return
         }
 
-        const prefix = getCommonPrefix(optionA, optionB)
+        const [prefix, warnings] = getCommonPrefix(optionA, optionB, reportedWarnings)
+
+        allWarnings = allWarnings.concat(warnings)
 
         if (prefix) {
           hasCommonPrefixes = true
@@ -237,30 +256,45 @@ function checkForCommonPrefix(grammar) {
     })
 
     if (hasCommonPrefixes) {
-      nonTerminal.hasCommonPrefixes = true
-      nonTerminal.commonPrefixes = Object.values(commonPrefixes)
-        .map(prefix => {
-          return {
-            common: prefix.common,
-            sources: prefix.sources,
-          }
-        })
+      nonTerminal.commonPrefixes = {
+        exist: true,
+        warnings: allWarnings,
+        prefixes: Object.values(commonPrefixes)
+          .map(prefix => {
+            return {
+              common: prefix.common,
+              sources: prefix.sources,
+            }
+          })
+      }
+    } else {
+      nonTerminal.commonPrefixes.exist = false
+      nonTerminal.commonPrefixes.warnings = allWarnings
+    }
+
+    if (allWarnings.length > 0) {
+      const groupLabel = `For ${nonTerminal.value} non-terminal:`
+      console.groupCollapsed(groupLabel)
+      allWarnings.forEach(warning => console.log(warning))
+      console.groupEnd(groupLabel)
     }
   })
 }
 
-function getCommonPrefix(optionA, optionB) {
+function getCommonPrefix(optionA, optionB, reportedWarnings) {
   if (optionA === undefined || optionB === undefined) {
-    return null
+    return [null, []]
   }
 
   const aSource = optionA.elements.map(e => e.value).join(' ')
   const bSource = optionB.elements.map(e => e.value).join(' ')
   let common = ''
 
+  const warnings = []
+
   for (let i = 0; i < optionA.elements.length; i++) {
     if (i >= optionB.elements.length) {
-      break;
+      break
     }
 
     const elementA = optionA.elements[i]
@@ -269,20 +303,26 @@ function getCommonPrefix(optionA, optionB) {
     if (elementA.value === elementB.value) {
       common += elementA.value + ' '
     } else {
+      if (elementA instanceof NonTerminal && elementB instanceof NonTerminal) {
+        if (!reportedWarnings.has(`${elementA.value}:${elementB.value}`) && !reportedWarnings.has(`${elementB.value}:${elementA.value}`)) {
+          warnings.push(
+            `Found two corresponding non-terminals that don't match, might need expansion to check prefix: ${elementA.value} and ${elementB.value}`
+          )
+          reportedWarnings.add(`${elementA.value}:${elementB.value}`)
+        }
+      }
+
       break
     }
   }
 
   if (!common) {
-    return null
+    return [null, warnings]
   }
 
   const sources = [aSource, bSource]
 
-  return {
-    common,
-    sources,
-  }
+  return [{ common, sources }, warnings]
 }
 
 function createOrAppendPrefix(allPrefixes, newPrefix) {
@@ -371,13 +411,15 @@ function test() {
 <c> ::= c | ε | <d>
 <d> ::= d | <a> d | <b> d | <e> | ε
 <e> ::= a <e> | e | ε
-`.trim();
+`.trim()
 
-  const grammar = parse(g);
+  console.log('example grammar source:')
+  console.log(g)
 
-  console.log('example grammar:');
-  console.log(g);
-  console.log(grammar);
+  const grammar = parse(g, 'example grammar')
+
+  console.log('example grammar parsed:')
+  console.log(grammar)
 }
 
-test();
+test()
