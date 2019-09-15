@@ -399,9 +399,9 @@ export const CD19 = `
 <id> ::= id
 <structid> ::= id
 <typeid> ::= id
-<intlit> ::= \\d
-<reallit> ::= \\d.\\d
-<string> ::= ".*"
+<intlit> ::= 42
+<reallit> ::= 0.0000001000000100000110
+<string> ::= "oh hai mark"
 `.trim()
 
 function test() {
