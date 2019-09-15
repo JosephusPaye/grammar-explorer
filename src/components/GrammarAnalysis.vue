@@ -40,7 +40,7 @@
 
             v-for="(tab, index) in nonTerminal.tabs"
           >
-            <div class="py-2 px-2 overflow-x-auto font-mono" style="width: calc((100vw / 2) - 202px)">
+            <div class="py-2 px-2 overflow-x-auto font-mono" style="width: calc((100vw / 2) - 208px)">
               <div v-if="tab.type === 'text'">{{ tab.content }}</div>
               <ui-prefix
                 :prefixes="tab.commonPrefixes"

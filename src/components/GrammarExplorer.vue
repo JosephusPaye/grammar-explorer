@@ -1,7 +1,7 @@
 <template>
   <div class="grammar-explorer">
     <template v-if="start">
-      <div class="bg-gray-700 text-white px-1 font-mono text-sm cursor-default grammar-explorer-label">
+      <div class="bg-gray-700 text-white px-1 font-mono text-sm cursor-default table">
         {{ start.value }}
       </div>
 
@@ -43,9 +43,5 @@ export default {
 <style>
 .p-2 {
   padding: 0.4rem!important;
-}
-
-.grammar-explorer-label {
-  width: fit-content;
 }
 </style>

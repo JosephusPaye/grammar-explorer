@@ -303,15 +303,7 @@ function getCommonPrefix(optionA, optionB, reportedWarnings) {
     if (elementA.value === elementB.value) {
       common += elementA.value + ' '
     } else {
-      if (elementA instanceof NonTerminal && elementB instanceof NonTerminal) {
-        if (!reportedWarnings.has(`${elementA.value}:${elementB.value}`) && !reportedWarnings.has(`${elementB.value}:${elementA.value}`)) {
-          warnings.push(
-            `Found two corresponding non-terminals that don't match, might need expansion to check prefix: ${elementA.value} and ${elementB.value}`
-          )
-          reportedWarnings.add(`${elementA.value}:${elementB.value}`)
-        }
-      }
-
+      maybeAddWarning(elementA, elementB, reportedWarnings, warnings)
       break
     }
   }
@@ -323,6 +315,36 @@ function getCommonPrefix(optionA, optionB, reportedWarnings) {
   const sources = [aSource, bSource]
 
   return [{ common, sources }, warnings]
+}
+
+function maybeAddWarning(elementA, elementB, reportedWarnings, warnings) {
+  if (!(elementA instanceof NonTerminal) && !(elementB instanceof NonTerminal)) {
+    return
+  }
+
+  if (reportedWarnings.has(`${elementA.value}:${elementB.value}`) || reportedWarnings.has(`${elementB.value}:${elementA.value}`)) {
+    return
+  }
+
+  if (elementA instanceof Epsilon || elementB instanceof Epsilon) {
+    return
+  }
+
+  if (elementA instanceof NonTerminal && elementB instanceof NonTerminal) {
+    warnings.push(
+      `Found two corresponding non-terminals that don't match, might need expansion to check prefix: ${elementA.value} and ${elementB.value}`
+    )
+  } else if (elementA instanceof NonTerminal) {
+    warnings.push(
+      `Found a non-terminal that don't match corresponding terminal, might need expansion to check prefix: ${elementA.value} (non-terminal) and ${elementB.value} (terminal)`
+    )
+  } else {
+    warnings.push(
+      `Found a non-terminal that don't match corresponding terminal, might need expansion to check prefix: ${elementB.value} (non-terminal) and ${elementA.value} (terminal)`
+    )
+  }
+
+  reportedWarnings.add(`${elementA.value}:${elementB.value}`)
 }
 
 function createOrAppendPrefix(allPrefixes, newPrefix) {

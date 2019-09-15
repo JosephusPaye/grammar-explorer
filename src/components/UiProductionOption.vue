@@ -1,5 +1,5 @@
 <template>
-  <div class="option p-2 mr-2 border border-gray-700 bg-gray-100">
+  <div class="option table p-2 mr-2 border border-gray-700 bg-gray-100">
     <div class="flex flex-no-wrap relative">
       <ui-production-element
         :element="element"
@@ -55,8 +55,6 @@ export default {
 
 <style lang="scss">
 .option {
-  height: fit-content;
-
   &:last-child {
     margin-right: 0!important;
   }
