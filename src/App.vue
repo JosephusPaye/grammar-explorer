@@ -22,6 +22,7 @@
         </div>
       </ui-tab>
     </ui-tabs>
+    <a href="mailto:c3211849@uon.edu.au" class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2" title="Email me at c3211849@uon.edu.au">Found a bug?</a>
   </div>
 </template>
 
