@@ -69,7 +69,7 @@ export default {
         this.grammar = grammar
         this.grammarInvalid = false
       } catch (err) {
-        console.error(err)
+        // console.error(err)
         this.grammarInvalid = true
       }
     },
