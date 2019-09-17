@@ -88,8 +88,8 @@ export default {
 .grid {
   display: grid;
   height: calc(100vh - 44px);
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-column: 1;
+  grid-row: 2;
 
   .grammar-analysis {
     border-top-width: 0;
