@@ -273,7 +273,7 @@ function checkForCommonPrefix(grammar) {
     }
 
     if (allWarnings.length > 0) {
-      const groupLabel = `For ${nonTerminal.value} non-terminal:`
+      const groupLabel = `For ${nonTerminal.value} non-terminal`
       console.groupCollapsed(groupLabel)
       allWarnings.forEach(warning => console.log(warning))
       console.groupEnd(groupLabel)

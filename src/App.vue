@@ -52,9 +52,16 @@ const persistInput = debounce(input => {
   if (input) {
     localStorage.setItem(localStorageKey, input)
   }
-}, 300)
+}, 200)
 
-const parseGrammar = debounce(parse, 300)
+const parseGrammar = debounce((input, label, callback) => {
+  try {
+    const grammar = parse(input, label)
+    callback({ valid: true, grammar })
+  } catch (err) {
+    callback({ valid: false, err })
+  }
+}, 200)
 
 export default {
   name: 'app',
@@ -88,11 +95,14 @@ export default {
 
   methods: {
     parseGrammar() {
-      try {
-        const grammar = parseGrammar(this.grammarText, 'input grammar')
+      parseGrammar(this.grammarText, 'input grammar', this.onGrammarParse)
+    },
+
+    onGrammarParse({ grammar, valid, err }) {
+      if (valid) {
         this.grammar = grammar
         this.grammarInvalid = false
-      } catch (err) {
+      } else {
         // console.error(err)
         this.grammarInvalid = true
       }
