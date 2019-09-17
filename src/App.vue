@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import debounce from 'debounce'
 import { parse, CD19 } from './grammar'
 import GrammarInput from './components/GrammarInput.vue'
 import GrammarAnalysis from './components/GrammarAnalysis.vue'
@@ -47,11 +48,13 @@ function getDefaultInput() {
   return previousInput ? previousInput : CD19
 }
 
-function presistInput(input) {
+const persistInput = debounce(input => {
   if (input) {
     localStorage.setItem(localStorageKey, input)
   }
-}
+}, 300)
+
+const parseGrammar = debounce(parse, 300)
 
 export default {
   name: 'app',
@@ -75,7 +78,7 @@ export default {
   watch: {
     grammarText(input) {
       this.parseGrammar()
-      presistInput(input)
+      persistInput(input)
     }
   },
 
@@ -86,7 +89,7 @@ export default {
   methods: {
     parseGrammar() {
       try {
-        const grammar = parse(this.grammarText, 'input grammar')
+        const grammar = parseGrammar(this.grammarText, 'input grammar')
         this.grammar = grammar
         this.grammarInvalid = false
       } catch (err) {
