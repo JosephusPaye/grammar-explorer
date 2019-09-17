@@ -14,7 +14,7 @@
 
     <div v-else>None</div>
 
-    <div v-if="warnings.length > 0" class="bg-gray-200 text-sm mt-2 p-2 whitespace-no-wrap table">
+    <div v-if="warnings.length > 0" class="bg-gray-200 text-sm mt-2 p-2 whitespace-no-wrap table w-full">
       <div v-for="warning in warnings">⚠️ {{ warning }}</div>
     </div>
   </div>

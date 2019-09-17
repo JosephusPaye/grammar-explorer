@@ -92,9 +92,11 @@ export default {
               },
               {
                 id: nextId(),
-                label: 'Right Recursion',
+                label: nonTerminal.rightRecursion.exists
+                  ? 'Right Recursion ✅'
+                  : 'Right Recursion ❌',
                 type: 'text',
-                content: 'Not implemented'
+                content: nonTerminal.rightRecursion.path,
               },
               {
                 id: nextId(),
@@ -112,7 +114,7 @@ export default {
 
   methods: {
     matchesFilter(nonTerminal) {
-      if (this.filter && !nonTerminal.value.includes(this.filter)) {
+      if (this.filter && !nonTerminal.value.toLowerCase().includes(this.filter.toLowerCase())) {
         return false
       }
 

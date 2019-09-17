@@ -14,7 +14,7 @@ export class NonTerminal {
     }
     this.rightRecursion = {
       exists: false,
-      path: 'Not implemented',
+      path: 'None',
     }
     this.commonPrefixes = {
       exist: false,
@@ -86,6 +86,7 @@ export function parse(text, label) {
   })
 
   checkForLeftRecursion(grammar)
+  checkForRightRecursion(grammar)
 
   console.groupCollapsed(label + ' common prefix check warnings')
   checkForCommonPrefix(grammar)
@@ -179,48 +180,77 @@ function extractNonTerminalFromElement(current, elementArr) {
 function checkForLeftRecursion(grammar) {
   Object.values(grammar).forEach(nonTerminal => {
     const visited = new Set()
-    hasLeftRecursion(nonTerminal, nonTerminal, visited, "")
+    hasRecursion('left', nonTerminal, nonTerminal, visited, '')
   })
 }
 
-function hasLeftRecursion(targetNonTerminal, currentNonTerminal, visited, path) {
+function checkForRightRecursion(grammar) {
+  Object.values(grammar).forEach(nonTerminal => {
+    const visited = new Set()
+    hasRecursion('right', nonTerminal, nonTerminal, visited, '')
+  })
+}
+
+function hasRecursion(direction, targetNonTerminal, currentNonTerminal, visited, path) {
   const newPath = path.length > 0
     ? `${path} → ${currentNonTerminal.value}`
     : currentNonTerminal.value
 
-  const leftNonTerminals = []
+  const nextNonTerminals = []
 
-  let foundLeftRecursion = currentNonTerminal.productions.some(production => {
+  let foundRecursion = currentNonTerminal.productions.some(production => {
     return production.options.some(option => {
-      // Return and move to next option if this production option has
-      // no elements or the first element is not a non-terminal
-      if (option.elements.length === 0 || !(option.elements[0] instanceof NonTerminal)) {
+      // Return and move to next option if this production option has no elements
+      if (option.elements.length === 0) {
         return false
       }
 
-      const leftNonTerminal = option.elements[0]
+      if (direction === 'left') {
+        const firstElement = option.elements[0]
 
-      if (leftNonTerminal === targetNonTerminal) {
-        targetNonTerminal.leftRecursion.exists = true
-        targetNonTerminal.leftRecursion.path = `${newPath} → ${targetNonTerminal.value}`
-        return true
+        // Return early if the first element of this option is not a non-terminal
+        if (!(firstElement instanceof NonTerminal)) {
+          return false
+        }
+
+        if (firstElement === targetNonTerminal) {
+            targetNonTerminal.leftRecursion.exists = true
+            targetNonTerminal.leftRecursion.path = `${newPath} → ${targetNonTerminal.value}`
+          return true
+        } else {
+          nextNonTerminals.push(firstElement)
+          return false
+        }
       } else {
-        leftNonTerminals.push(leftNonTerminal)
-        return false
+        const lastElement = option.elements[option.elements.length - 1]
+
+        // Return early if the last element of this option is not a non-terminal
+        if (!(lastElement instanceof NonTerminal)) {
+          return false
+        }
+
+        if (lastElement === targetNonTerminal) {
+            targetNonTerminal.rightRecursion.exists = true
+            targetNonTerminal.rightRecursion.path = `${newPath} → ${targetNonTerminal.value}`
+          return true
+        } else {
+          nextNonTerminals.push(lastElement)
+          return false
+        }
       }
     })
   })
 
-  if (foundLeftRecursion) {
+  if (foundRecursion) {
     return true
   }
 
   visited.add(currentNonTerminal)
 
-  return leftNonTerminals
+  return nextNonTerminals
     .filter(nonTerminal => !visited.has(nonTerminal))
     .some(nonTerminal => {
-      return hasLeftRecursion(targetNonTerminal, nonTerminal, visited, newPath)
+      return hasRecursion(direction, targetNonTerminal, nonTerminal, visited, newPath)
     })
 }
 
