@@ -6,6 +6,7 @@
           <grammar-input
             class="max-h-full"
             :invalid="grammarInvalid"
+            @reset="resetGrammar"
             v-model="grammarText"
           ></grammar-input>
 
@@ -39,6 +40,19 @@ import GrammarExplorer from './components/GrammarExplorer.vue'
 import UiTabs from './components/UiTabs.vue'
 import UiTab from './components/UiTab.vue'
 
+const localStorageKey = 'grammar-explorer:input'
+
+function getDefaultInput() {
+  const previousInput = localStorage.getItem(localStorageKey)
+  return previousInput ? previousInput : CD19
+}
+
+function presistInput(input) {
+  if (input) {
+    localStorage.setItem(localStorageKey, input)
+  }
+}
+
 export default {
   name: 'app',
 
@@ -52,15 +66,16 @@ export default {
 
   data() {
     return {
-      grammarText: CD19,
+      grammarText: getDefaultInput(),
       grammarInvalid: false,
       grammar: undefined,
     }
   },
 
   watch: {
-    grammarText() {
+    grammarText(input) {
       this.parseGrammar()
+      presistInput(input)
     }
   },
 
@@ -78,6 +93,10 @@ export default {
         // console.error(err)
         this.grammarInvalid = true
       }
+    },
+
+    resetGrammar() {
+      this.grammarText = CD19
     },
   },
 }
