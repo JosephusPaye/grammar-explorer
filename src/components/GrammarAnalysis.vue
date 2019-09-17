@@ -2,21 +2,21 @@
   <div class="grammar-analysis border border-gray-300 p-4">
     <template v-if="hasGrammar">
       <input
-        class="w-full border-2 border-gray-400 rounded px-4 py-2 block mb-2 focus:border-blue-500 focus:outline-none"
+        class="w-full border-2 border-gray-400 px-4 py-2 block mb-2 focus:border-blue-500 focus:outline-none"
         type="text"
         placeholder="Filter non terminals..."
         v-model="filter"
       >
 
       <div class="mb-6">
-        <label class="mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterLeftRecursion"> Left Recursion
+        <label class="inline-flex items-center mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterLeftRecursion" class="mr-1"> Left Recursion
         </label>
-        <label class="mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterRightRecursion"> Right Recursion
+        <label class="inline-flex items-center mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterRightRecursion" class="mr-1"> Right Recursion
         </label>
-        <label class="mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterCommonPrefix"> Common Prefix
+        <label class="inline-flex items-center mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix
         </label>
       </div>
 
@@ -24,33 +24,12 @@
         No matching non terminals
       </div>
 
-      <div
-        class="mb-4 flex"
+      <non-terminal-analysis
+        class="mb-4"
+        :non-terminal="nonTerminal"
         :key="nonTerminal.value + nonTerminal.id"
         v-for="nonTerminal in nonTerminals"
-      >
-        <div class="w-40 font-mono p-2 bg-blue-600 text-white flex-shrink-0">
-          {{ nonTerminal.value }}
-        </div>
-        <ui-tabs class="w-full border border-gray-800" compact>
-          <ui-tab
-            :key="nonTerminal.value + index"
-            :selected="index === 0"
-            :label="tab.label"
-
-            v-for="(tab, index) in nonTerminal.tabs"
-          >
-            <div class="py-2 px-2 overflow-x-auto font-mono" style="width: calc((100vw / 2) - 208px)">
-              <div v-if="tab.type === 'text'">{{ tab.content }}</div>
-              <ui-prefix
-                :prefixes="tab.commonPrefixes"
-
-                v-else-if="tab.type === 'prefixes'"
-              ></ui-prefix>
-            </div>
-          </ui-tab>
-        </ui-tabs>
-      </div>
+      ></non-terminal-analysis>
     </template>
 
     <div class="p-8 text-gray-600 text-lg text-center" v-else>
@@ -60,9 +39,7 @@
 </template>
 
 <script>
-import UiPrefix from './UiPrefix.vue'
-import UiTabs from './UiTabs.vue'
-import UiTab from './UiTab.vue'
+import NonTerminalAnalysis from './NonTerminalAnalysis.vue'
 
 let currentId = 0
 function nextId() {
@@ -73,9 +50,7 @@ export default {
   name: 'GrammarAnalysis',
 
   components: {
-    UiPrefix,
-    UiTabs,
-    UiTab
+    NonTerminalAnalysis,
   },
 
   props: {

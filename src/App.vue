@@ -22,7 +22,12 @@
         </div>
       </ui-tab>
     </ui-tabs>
-    <a href="mailto:c3211849@uon.edu.au" class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2" title="Email me at c3211849@uon.edu.au">🐞 Found an issue?</a>
+
+    <a
+      class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2"
+      href="mailto:c3211849@uon.edu.au"
+      title="Email me at c3211849@uon.edu.au"
+    >🐞 Found an issue?</a>
   </div>
 </template>
 
@@ -79,12 +84,26 @@ export default {
 </script>
 
 <style src="./assets/tailwind.css"></style>
-<style>
+<style lang="scss">
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
   height: calc(100vh - 44px);
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+
+  .grammar-analysis {
+    border-top-width: 0;
+  }
+
+  @screen lg {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+
+    .grammar-analysis {
+      border-top-width: 1px;
+      border-left-width: 0;
+    }
+  }
 }
 
 .explorer-wrapper {
