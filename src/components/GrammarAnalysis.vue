@@ -102,7 +102,9 @@ export default {
                 id: nextId(),
                 label: nonTerminal.commonPrefixes.exist
                   ? 'Common Prefix ✅'
-                  : 'Common Prefix ❌',
+                  : nonTerminal.commonPrefixes.warnings.length > 0
+                    ? 'Common Prefix ⚠️'
+                    : 'Common Prefix ❌',
                 type: 'prefixes',
                 commonPrefixes: nonTerminal.commonPrefixes,
               }
