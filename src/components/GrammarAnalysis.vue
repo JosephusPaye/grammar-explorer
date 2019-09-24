@@ -128,7 +128,7 @@ export default {
         return false
       }
 
-      if (this.filterCommonPrefix && !nonTerminal.commonPrefixes.exist) {
+      if (this.filterCommonPrefix && !nonTerminal.commonPrefixes.exist && nonTerminal.commonPrefixes.warnings.length === 0) {
         return false
       }
 
