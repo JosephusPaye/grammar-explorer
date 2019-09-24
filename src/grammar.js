@@ -366,11 +366,11 @@ function maybeAddWarning(elementA, elementB, reportedWarnings, warnings) {
     )
   } else if (elementA instanceof NonTerminal) {
     warnings.push(
-      `Found a non-terminal that don't match corresponding terminal, might need expansion to check prefix: ${elementA.value} (non-terminal) and ${elementB.value} (terminal)`
+      `Found a non-terminal that doesn't match the corresponding terminal, might need expansion to check prefix: ${elementA.value} (non-terminal) and ${elementB.value} (terminal)`
     )
   } else {
     warnings.push(
-      `Found a non-terminal that don't match corresponding terminal, might need expansion to check prefix: ${elementB.value} (non-terminal) and ${elementA.value} (terminal)`
+      `Found a non-terminal that doesn't match the corresponding terminal, might need expansion to check prefix: ${elementB.value} (non-terminal) and ${elementA.value} (terminal)`
     )
   }
 
