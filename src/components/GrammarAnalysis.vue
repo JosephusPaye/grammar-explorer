@@ -107,6 +107,15 @@ export default {
                     : 'Common Prefix ❌',
                 type: 'prefixes',
                 commonPrefixes: nonTerminal.commonPrefixes,
+              },
+              {
+                id: nextId(),
+                label: nonTerminal.firstSet.length > 0
+                  ? 'FIRST ✅'
+                  : 'FIRST ⚠️',
+                type: 'set',
+                set: nonTerminal.firstSet,
+                warnings: nonTerminal.firstSetWarnings,
               }
             ]
           }

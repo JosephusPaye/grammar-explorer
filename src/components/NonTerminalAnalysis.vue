@@ -18,6 +18,12 @@
 
             v-else-if="tab.type === 'prefixes'"
           ></ui-prefix>
+          <ui-set
+            :set="tab.set"
+            :warnings="tab.warnings"
+
+            v-else-if="tab.type === 'set'"
+          ></ui-set>
         </div>
       </ui-tab>
     </ui-tabs>
@@ -26,6 +32,7 @@
 
 <script>
 import UiPrefix from './UiPrefix.vue'
+import UiSet from './UiSet.vue'
 import UiTabs from './UiTabs.vue'
 import UiTab from './UiTab.vue'
 
@@ -34,6 +41,7 @@ export default {
 
   components: {
     UiPrefix,
+    UiSet,
     UiTabs,
     UiTab,
   },

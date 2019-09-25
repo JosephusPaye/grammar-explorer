@@ -22,6 +22,8 @@ export class NonTerminal {
       warnings: [],
     }
     this.productions = []
+    this.firstSet = []
+    this.firstSetWarnings = []
   }
 }
 
@@ -88,9 +90,13 @@ export function parse(text, label) {
   checkForLeftRecursion(grammar)
   checkForRightRecursion(grammar)
 
+  console.groupCollapsed(label + ' FIRST set warnings')
+  addFirsts(grammar)
+  console.groupEnd(label + ' FIRST set warnings')
+
   console.groupCollapsed(label + ' common prefix check warnings')
   checkForCommonPrefix(grammar)
-  console.groupEnd(label)
+  console.groupEnd(label + ' common prefix check warnings')
 
   return grammar
 }
@@ -390,6 +396,130 @@ function createOrAppendPrefix(allPrefixes, newPrefix) {
     })
 
   allPrefixes[newPrefix.common] = prefixList
+}
+
+function addFirsts(grammar) {
+  Object.values(grammar).forEach(nonTerminal => {
+    nonTerminal.firstSet = Array.from(firstOfElement(nonTerminal))
+
+    if (nonTerminal.firstSetWarnings.length > 0) {
+      const label = `FIRST of ${nonTerminal.value}`
+      console.groupCollapsed(label)
+      nonTerminal.firstSetWarnings.forEach(warning => console.log(warning))
+      console.groupEnd(label)
+    }
+  })
+}
+
+/**
+ * Compute the FIRST set of the given element.
+ * Algorithm adapted from https://www.jambe.co.nz/UNI/FirstAndFollowSets.html
+ */
+function firstOfElement(element) {
+  // Defer to firstOfList if we have a list of elements Y1...Yk
+  if (Array.isArray(element)) {
+    return firstOfList(element)
+  }
+
+  // FIRST of epsilon is just { epsilon }
+  if (element instanceof Epsilon) {
+    return new Set([element])
+  }
+
+  // FIRST of a terminal is just { terminal }
+  if (element instanceof Terminal) {
+    return new Set([element])
+  }
+
+  // Add a warning and abort if the non terminal is left recursive
+  if (element.leftRecursion.exists) {
+    const warning = `Could not calculate FIRST of ${element.value} as it's left recursive`
+    element.firstSetWarnings = [warning]
+    return new Set()
+  }
+
+  const firstSet = new Set();
+  const productions = allProductions(element)
+
+  // Looking at each production...
+  productions.forEach(production => {
+    // If the production has only one element which is epsilon, add epsilon to the first set
+    if (production.elements.length === 1 && production.elements[0] instanceof Epsilon) {
+      firstSet.add(production.elements[0])
+    }
+    // Otherwise, compute the first of the list of production elements and add everything
+    // in that to the first set constructed for the non terminal so far
+    else {
+      firstOfList(production.elements).forEach(member => {
+        firstSet.add(member)
+      })
+    }
+  })
+
+  return firstSet
+}
+
+/**
+ * Compute the FIRST set of a list of elements Y1..Yk
+ * Algorithm adapted from https://www.jambe.co.nz/UNI/FirstAndFollowSets.html
+ */
+function firstOfList(elements) {
+  // If there's only one element in the list, defer to firstOfElement
+  if (elements.length === 0) {
+    return firstOfElement(elements[0])
+  }
+
+  // Get FIRST(Y1)
+  const firstOfStartingElement = firstOfElement(elements[0])
+
+  // If FIRST(Y1) doesn't include epsilon, then FIRST(Y1..Yk) is just FIRST(Y1)
+  if (!hasEpsilon(firstOfStartingElement)) {
+    return firstOfStartingElement
+  }
+
+  // Otherwise we calculate FIRST(Y1..Yk)
+  let firstSet = new Set()
+
+  // Add everything in FIRST(Y1) except epsilon
+  firstOfStartingElement.forEach(member => {
+    if (! (member instanceof Epsilon)) {
+      firstSet.add(member)
+    }
+  })
+
+  // Add everything in FIRST(Y2..Yk)
+  firstOfList(elements.slice(1)).forEach(member => {
+    firstSet.add(member)
+  })
+
+  // If the individual first FIRST(Y1), FIRST(Y2), ..., FIRST(Yk) all contain epsilon
+  // then add epsilon to FIRST(Y1Y2..Yk) as well
+  if (!hasEpsilon(firstSet) && elements.map(firstOfElement).every(hasEpsilon)) {
+    firstSet.add(new Epsilon())
+  }
+
+  return firstSet
+}
+
+/**
+ * Check if the given set contains Epsilon
+ */
+function hasEpsilon(set) {
+  return Array.from(set).some(member => member instanceof Epsilon)
+}
+
+/**
+ * Normalize all ProductionOptions for the given non-terminal
+ * into a flat list of options (i.e. productions)
+ */
+function allProductions(nonTerminal) {
+  let options = []
+
+  nonTerminal.productions.forEach(production => {
+    options = options.concat(production.options)
+  })
+
+  return options
 }
 
 export const CD19 = `
