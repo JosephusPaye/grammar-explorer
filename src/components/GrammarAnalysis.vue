@@ -18,6 +18,9 @@
         <label class="inline-flex items-center mr-4 cursor-pointer">
           <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix
         </label>
+        <label class="inline-flex items-center mr-4 cursor-pointer">
+          <input type="checkbox" v-model="filterFirstSetWarnings" class="mr-1"> FIRST set warnings
+        </label>
       </div>
 
       <div class="p-8 text-gray-600 text-lg text-center border" v-if="nonTerminals.length === 0">
@@ -63,6 +66,7 @@ export default {
       filterLeftRecursion: false,
       filterRightRecursion: false,
       filterCommonPrefix: false,
+      filterFirstSetWarnings: false,
     }
   },
 
@@ -138,6 +142,10 @@ export default {
       }
 
       if (this.filterCommonPrefix && !nonTerminal.commonPrefixes.exist && nonTerminal.commonPrefixes.warnings.length === 0) {
+        return false
+      }
+
+      if (this.filterFirstSetWarnings && nonTerminal.firstSetWarnings.length === 0) {
         return false
       }
 
