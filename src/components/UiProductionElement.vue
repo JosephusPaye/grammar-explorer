@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { NonTerminal, Terminal, Epsilon } from '../grammar'
+import { NonTerminal, Terminal, Epsilon } from '../grammar/models'
 
 export default {
   name: 'UiProductionElement',
@@ -22,15 +22,15 @@ export default {
 
   computed: {
     type() {
-      if (this.element instanceof NonTerminal) {
+      if (this.element.isNonTerminal()) {
         return 'non-terminal'
       }
 
-      if (this.element instanceof Terminal) {
+      if (this.element.isTerminal()) {
         return 'terminal'
       }
 
-      if (this.element instanceof Epsilon) {
+      if (this.element.isEpsilon()) {
         return 'epsilon'
       }
 
@@ -49,7 +49,7 @@ export default {
 
   methods: {
     toggleSelect(e) {
-      if (this.element instanceof NonTerminal) {
+      if (this.element.isNonTerminal()) {
         if (this.isSelected) {
           this.$emit('deselect', this.element)
         } else {

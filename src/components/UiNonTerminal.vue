@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { NonTerminal } from '../grammar'
+import { NonTerminal } from '../grammar/models'
 import UiProduction from './UiProduction.vue'
 
 export default {

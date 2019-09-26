@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { Production } from '../grammar'
+import { Production } from '../grammar/models'
 import UiProductionOption from './UiProductionOption.vue'
 
 export default {

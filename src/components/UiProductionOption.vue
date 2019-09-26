@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { NonTerminal, ProductionOption } from '../grammar'
+import { NonTerminal, ProductionOption } from '../grammar/models'
 import UiProductionElement from './UiProductionElement.vue'
 
 export default {
