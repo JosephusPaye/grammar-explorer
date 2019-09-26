@@ -1,7 +1,7 @@
 <template>
   <div class="grammar-input flex relative">
     <textarea
-      class="w-full bg-gray-400 border-2 border-gray-400 p-2 font-mono outline-none p-3 whitespace-no-wrap"
+      class="w-full bg-gray-400 border-2 border-gray-400 p-2 font-mono outline-none p-3 whitespace-pre"
       placeholder="Enter grammar with each rule on a newline line in the form: <non-terminal> ::= expansion a | expansion b"
       rows="12"
 
