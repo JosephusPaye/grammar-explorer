@@ -1,9 +1,12 @@
 import { EnhancedSet } from '../enhanced-set'
-import { Epsilon } from '../models'
+import { Epsilon, Terminal } from '../models'
+
+const epsilon = new Epsilon()
+const endOfInput = new Terminal('$')
 
 export function addFirsts(grammar) {
   Object.values(grammar).forEach(nonTerminal => {
-    nonTerminal.firstSet = firstOfElement(nonTerminal).toArray()
+    nonTerminal.firstSet = firstOfElement(nonTerminal)
 
     if (nonTerminal.firstSetWarnings.length > 0) {
       const label = `FIRST of ${nonTerminal.value}`
@@ -69,8 +72,6 @@ function firstOfList(elements) {
     return firstOfElement(elements[0])
   }
 
-  const epsilon = new Epsilon()
-
   // Get FIRST(Y1)
   const firstOfStartingElement = firstOfElement(elements[0])
 
@@ -95,4 +96,130 @@ function firstOfList(elements) {
   }
 
   return firstSet
+}
+
+export function addFollows(grammar) {
+  const grammarProductions = Object.values(grammar)
+    .map(nonTerminal => {
+      return nonTerminal.allProductions()
+        .map(production => {
+          return {
+            nonTerminal,
+            elements: production.elements
+          }
+        })
+    })
+    .flat()
+
+  Object.values(grammar).forEach(nonTerminal => {
+    // FOLLOW of the start symbol includes $
+    if (nonTerminal.isStartSymbol) {
+      nonTerminal.followSet.add(endOfInput)
+    }
+
+    addFollow(nonTerminal, grammarProductions, 1)
+  })
+
+  Object.values(grammar).forEach(nonTerminal => {
+    addFollow(nonTerminal, grammarProductions, 2)
+  })
+}
+
+function addFollow(nonTerminal, grammarProductions, pass) {
+  // For the first pass, we're adding FIRST sets
+  if (pass === 1) {
+    grammarProductions.forEach(production => {
+      const location = locateElement(production.elements, nonTerminal)
+
+      if (!location.found) {
+        return
+      }
+
+      if (location.hasElementsAfter) {
+        nonTerminal.followSet.addAll(
+          firstOfListFromComputed(production.elements.slice(location.index + 1))
+            .except(epsilon)
+        )
+      }
+    })
+  } else if (pass === 2) {
+    grammarProductions.forEach(production => {
+      const location = locateElement(production.elements, nonTerminal)
+
+      if (!location.found) {
+        return
+      }
+
+      if (!location.hasElementsAfter || producesEpsilon(production.elements.slice(location.index + 1))) {
+        nonTerminal.followSet.addAll(production.nonTerminal.followSet)
+      }
+    })
+  }
+}
+
+function firstOfElementFromComputed(element) {
+  if (Array.isArray(element)) {
+    return firstOfListFromComputed(element)
+  }
+
+  // FIRST of epsilon is just { epsilon }
+  if (element.isEpsilon()) {
+    return new EnhancedSet([element])
+  }
+
+  // FIRST of a terminal is just { terminal }
+  if (element.isTerminal()) {
+    return new EnhancedSet([element])
+  }
+
+  // We have a non-terminal, simply return its FIRST set
+  return element.firstSet
+}
+
+function firstOfListFromComputed(elements) {
+  const firstSet = new EnhancedSet()
+
+  let allElementsHaveEpsilon = elements.length > 0
+
+  for (let i = 0; i < elements.length; i++) {
+    const first = firstOfElementFromComputed(elements[i])
+
+    firstSet.addAll(first.except(epsilon))
+
+    if (!first.has(epsilon)) {
+      allElementsHaveEpsilon = false
+      break
+    }
+  }
+
+  if (allElementsHaveEpsilon) {
+    firstSet.add(epsilon)
+  }
+
+  return firstSet
+}
+
+function locateElement(list, targetElement) {
+  const result = {
+    index: list.findIndex(element => element.equals(targetElement)),
+    element: undefined,
+    found: false,
+    hasElementsBefore: false,
+    hasElementsAfter: false,
+  }
+
+  if (result.index === -1) {
+    return result
+  }
+
+  result.found = true
+  result.element = list[result.index]
+  result.hasElementsBefore = result.index > 0
+  result.hasElementsAfter = result.index < (list.length - 1)
+
+  return result
+}
+
+function producesEpsilon(elements) {
+  return firstOfListFromComputed(elements).has(epsilon)
 }

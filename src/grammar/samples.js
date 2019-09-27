@@ -80,3 +80,11 @@ export const FirstAndFollow = `
 <F> ::= (<E>)
 <F> ::= id
 `.trim()
+
+export const FirstAndFollow2 = `
+<S> ::= <A> <B> <C> | <A> <D>
+<A> ::= ε | a <A>
+<B> ::= b | c | ε
+<C> ::= <D> d <C>
+<D> ::= e b | f c
+`.trim()

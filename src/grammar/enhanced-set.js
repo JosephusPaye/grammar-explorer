@@ -3,7 +3,11 @@ export class EnhancedSet {
     this.set = new Set(iterable)
   }
 
-  size() {
+  get size() {
+    return this.set.size
+  }
+
+  get length() {
     return this.set.size
   }
 

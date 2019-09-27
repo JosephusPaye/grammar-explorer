@@ -1,6 +1,6 @@
 import { checkForLeftRecursion, checkForRightRecursion } from './analysis/recursion'
 import { checkForCommonPrefix } from './analysis/common-prefix'
-import { addFirsts } from './analysis/first-and-follow'
+import { addFirsts, addFollows } from './analysis/first-and-follow'
 
 export function analyse(grammar, label) {
   checkForLeftRecursion(grammar)
@@ -13,4 +13,8 @@ export function analyse(grammar, label) {
   console.groupCollapsed(label + ' FIRST set warnings')
   addFirsts(grammar)
   console.groupEnd(label + ' FIRST set warnings')
+
+  console.groupCollapsed(label + ' FOLLOW set warnings')
+  addFollows(grammar)
+  console.groupEnd(label + ' FOLLOW set warnings')
 }

@@ -118,8 +118,17 @@ export default {
                   ? 'FIRST ✅'
                   : 'FIRST ⚠️',
                 type: 'set',
-                set: nonTerminal.firstSet,
+                set: nonTerminal.firstSet.toArray(),
                 warnings: nonTerminal.firstSetWarnings,
+              },
+              {
+                id: nextId(),
+                label: nonTerminal.followSet.length > 0
+                  ? 'FOLLOW ✅'
+                  : 'FOLLOW ⚠️',
+                type: 'set',
+                set: nonTerminal.followSet.toArray(),
+                warnings: nonTerminal.followSetWarnings,
               }
             ]
           }

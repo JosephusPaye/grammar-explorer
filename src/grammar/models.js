@@ -1,3 +1,5 @@
+import { EnhancedSet } from './enhanced-set'
+
 let currentId = 0
 
 function nextId() {
@@ -69,10 +71,10 @@ export class NonTerminal extends Element {
       warnings: [],
     }
 
-    this.firstSet = []
+    this.firstSet = new EnhancedSet()
     this.firstSetWarnings = []
 
-    this.followSet = []
+    this.followSet = new EnhancedSet()
     this.followSetWarnings = []
   }
 
