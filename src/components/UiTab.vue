@@ -46,7 +46,7 @@ export default {
 
   watch: {
     label(newLabel) {
-      this.$parent.changeLabel(this.id, newLabel);
+      this.$parent.changeLabel(this.id, newLabel)
     },
   },
 }

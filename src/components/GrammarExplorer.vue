@@ -49,7 +49,7 @@ export default {
     return {
       dropdownOpen: false,
       selected: Object.values(this.grammar)[0],
-    };
+    }
   },
 
   computed: {

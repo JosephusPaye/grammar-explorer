@@ -57,7 +57,7 @@ export default {
     },
 
     changeLabel(id, newLabel) {
-      const index = this.tabs.findIndex(t => t.id === id);
+      const index = this.tabs.findIndex(t => t.id === id)
 
       if (index !== -1) {
         const newTab = Object.assign({}, this.tabs[index], { label: newLabel })
