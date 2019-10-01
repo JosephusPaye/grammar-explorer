@@ -11,7 +11,7 @@
 
     <div v-if="filteredLines.length > 0" class="flex-grow overflow-y-auto">
       <div
-        class="font-mono bg-gray-400 px-1 leading-relaxed"
+        class="font-mono whitespace-pre bg-gray-400 px-1 leading-relaxed"
         style="margin-bottom: 2px"
         v-for="line in filteredLines"
         v-html="line.highlighted"
@@ -70,7 +70,7 @@ export default {
 
     filteredLines() {
       return this.lines.map(this.findMatches).filter(line => line.matches)
-    }
+    },
   },
 
   methods: {
@@ -91,7 +91,7 @@ export default {
           .filter(target => target.length > 0)
 
         targets.forEach((target, i) => {
-          const match = findMatch(lineLowerCase, target)
+          const match = findMatch(line, target)
 
           if (match) {
             result.matches = true
