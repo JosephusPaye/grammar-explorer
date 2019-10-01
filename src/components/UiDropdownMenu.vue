@@ -8,6 +8,7 @@
 
       @click.stop
       @keydown.enter="selectFirst"
+      @keydown.esc="close"
 
       v-model="filter"
     >
@@ -75,7 +76,7 @@ export default {
 
       if (first) {
         this.select(first)
-        this.$emit('update:open', false)
+        this.close()
       }
     },
 
@@ -83,6 +84,10 @@ export default {
       if (option) {
         this.$emit('update:selected', option)
       }
+    },
+
+    close() {
+      this.$emit('update:open', false)
     },
   },
 }
