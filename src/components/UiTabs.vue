@@ -6,6 +6,7 @@
 
         :class="[{ selected: tab.id === selectedTabId }, compact ? 'text-sm py-2' : 'py-2']"
         :key="tab.id"
+        :title="tab.title"
 
         v-for="tab in tabs"
         @click="select(tab)"

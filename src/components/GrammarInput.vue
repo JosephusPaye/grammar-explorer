@@ -4,6 +4,7 @@
       class="w-full bg-gray-400 border-2 border-gray-400 p-2 font-mono outline-none p-3 whitespace-pre resize-none"
       placeholder="Enter grammar with each rule on a newline line in the form: <non-terminal> ::= expansion a | expansion b"
       rows="12"
+      ref="input"
 
       :class="{'border-red-500': invalid }"
       :value="value"
@@ -26,6 +27,18 @@ export default {
   props: {
     value: String,
     invalid: Boolean,
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.input.setSelectionRange(0, 0)
+    })
+  },
+
+  methods: {
+    focus() {
+      this.$refs.input && this.$refs.input.focus()
+    },
   },
 }
 </script>

@@ -3,6 +3,7 @@
     <template v-if="selected">
       <button
         class="relative table bg-gray-700 text-white px-1 font-mono text-sm cursor-pointer focus:outline-none"
+        title="Alt + N"
         @click="dropdownOpen = !dropdownOpen"
       >
         <div class="flex pr-1">
@@ -30,7 +31,6 @@
 </template>
 
 <script>
-import { addShortcut } from '../shortcuts'
 import UiNonTerminal from './UiNonTerminal.vue'
 import UiDropdownMenu from './UiDropdownMenu.vue'
 
@@ -60,23 +60,15 @@ export default {
     },
   },
 
-  mounted() {
-    this.cleanupShortcuts = addShortcut(
-      'altKey',
-      ['KeyN'],
-      () => {
-        this.dropdownOpen = true
-      }
-    )
-  },
-
-  beforeDestroy() {
-    this.cleanupShortcuts && this.cleanupShortcuts()
-  },
-
   watch: {
     grammar() {
       this.selected = Object.values(this.grammar)[0]
+    },
+  },
+
+  methods: {
+    focus() {
+      this.dropdownOpen = true
     },
   },
 }

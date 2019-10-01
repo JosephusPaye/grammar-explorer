@@ -18,6 +18,7 @@ export default {
 
   props: {
     label: String,
+    title: String,
     id: {
       type: String,
       default() {
@@ -40,6 +41,7 @@ export default {
     this.$parent.addTab({
       id: this.id,
       label: this.label,
+      title: this.title,
       selected: this.selected,
     })
   },

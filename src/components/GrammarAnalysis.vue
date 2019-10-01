@@ -1,39 +1,44 @@
 <template>
-  <div class="grammar-analysis p-4">
+  <div class="grammar-analysis flex flex-col py-2 px-3">
     <template v-if="hasGrammar">
-      <input
-        class="w-full border-2 border-gray-400 px-4 py-2 block mb-2 hover:border-gray-500 focus:border-blue-500 focus:outline-none"
-        type="text"
-        placeholder="Filter non terminals..."
-        ref="input"
-        v-model="filter"
-      >
+      <div class="flex-shrink-0 mb-3">
+        <input
+          class="w-full border-2 border-gray-400 px-4 py-2 block mb-2 hover:border-gray-500 focus:border-blue-500 focus:outline-none"
+          type="text"
+          placeholder="Filter non terminals (separate multiple terms with a comma)..."
+          ref="input"
+          title="Alt + /"
+          v-model="filter"
+        >
 
-      <div class="mb-6">
-        <label class="inline-flex items-center mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterLeftRecursion" class="mr-1"> Left Recursion
-        </label>
-        <label class="inline-flex items-center mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterRightRecursion" class="mr-1"> Right Recursion
-        </label>
-        <label class="inline-flex items-center mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix
-        </label>
-        <label class="inline-flex items-center mr-4 cursor-pointer">
-          <input type="checkbox" v-model="filterFirstSetWarnings" class="mr-1"> FIRST set warnings
-        </label>
+        <div>
+          <label class="inline-flex items-center mr-4 cursor-pointer">
+            <input type="checkbox" v-model="filterLeftRecursion" class="mr-1"> Left Recursion
+          </label>
+          <label class="inline-flex items-center mr-4 cursor-pointer">
+            <input type="checkbox" v-model="filterRightRecursion" class="mr-1"> Right Recursion
+          </label>
+          <label class="inline-flex items-center mr-4 cursor-pointer">
+            <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix
+          </label>
+          <label class="inline-flex items-center mr-4 cursor-pointer">
+            <input type="checkbox" v-model="filterFirstSetWarnings" class="mr-1"> FIRST set warnings
+          </label>
+        </div>
       </div>
 
-      <div class="p-8 text-gray-600 text-lg text-center border" v-if="nonTerminals.length === 0">
+      <div class="flex-grow overflow-y-auto pr-1" v-if="nonTerminals.length > 0">
+        <non-terminal-analysis
+          class="mb-4"
+          :non-terminal="nonTerminal"
+          :key="nonTerminal.value + nonTerminal.id"
+          v-for="nonTerminal in nonTerminals"
+        ></non-terminal-analysis>
+      </div>
+
+      <div class="p-8 text-gray-600 text-lg text-center border" v-else>
         No matching non terminals
       </div>
-
-      <non-terminal-analysis
-        class="mb-4"
-        :non-terminal="nonTerminal"
-        :key="nonTerminal.value + nonTerminal.id"
-        v-for="nonTerminal in nonTerminals"
-      ></non-terminal-analysis>
     </template>
 
     <div class="p-8 text-gray-600 text-lg text-center" v-else>
@@ -43,7 +48,6 @@
 </template>
 
 <script>
-import { addShortcut } from '../shortcuts'
 import NonTerminalAnalysis from './NonTerminalAnalysis.vue'
 
 let currentId = 0
@@ -135,27 +139,23 @@ export default {
             ]
           }
         })
-    }
-  },
-
-  mounted() {
-    this.cleanupShortcuts = addShortcut(
-      'altKey',
-      ['Slash'],
-      () => {
-        this.$refs.input && this.$refs.input.focus()
-      }
-    )
-  },
-
-  beforeDestroy() {
-    this.cleanupShortcuts && this.cleanupShortcuts()
+    },
   },
 
   methods: {
     matchesFilter(nonTerminal) {
-      if (this.filter && !nonTerminal.value.toLowerCase().includes(this.filter.toLowerCase())) {
-        return false
+      if (this.filter.trim()) {
+        const value = nonTerminal.value.toLowerCase()
+        const targets = this.filter
+          .trim()
+          .toLowerCase()
+          .split(',')
+          .map(target => target.trim())
+          .filter(target => target.length > 0)
+
+        if (!targets.some(target => value.includes(target))) {
+          return false
+        }
       }
 
       if (this.filterLeftRecursion && !nonTerminal.leftRecursion.exists) {
@@ -175,7 +175,11 @@ export default {
       }
 
       return true
-    }
-  }
+    },
+
+    focus() {
+      this.$refs.input && this.$refs.input.focus()
+    },
+  },
 }
 </script>

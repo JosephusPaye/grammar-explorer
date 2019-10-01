@@ -13,14 +13,15 @@ export function parse(text, label) {
 }
 
 function logDetails() {
-    const shortcuts = `
-Alt + Up:     Expand right/bottom panel
-Alt + Down:   Expand left/top panel
+  const shortcuts = `
+Alt + Down:   Expand Input/Search/Explore panel
+Alt + Up:     Expand analysis panel
 Alt + I:      Select Input tab
+Alt + S:      Select Search tab
 Alt + X:      Select Explore tab
-Alt + X + N:  Select Explore tab and open non-terminal selector
-Alt + /:      Focus non-terminal filter
-    `.trim()
+Alt + N:      Select Explore tab and open non-terminal selector
+Alt + /:      Reveal analysis panel and focus non-terminal filter
+  `.trim()
 
   console.log('Keyboard shortcuts:')
   console.log(shortcuts)

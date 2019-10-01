@@ -2,18 +2,31 @@
   <div id="app" class="app" :class="['layout-' + layout]">
     <div class="w-full relative min-h-0 overflow-hidden">
       <ui-tabs class="h-full w-full" ref="tabs">
-        <ui-tab id="input" label="Input" selected>
+        <ui-tab id="input" label="Input" title="Alt + I" selected>
           <grammar-input
             class="w-full h-full max-h-full"
+            ref="grammarInput"
             :invalid="grammarInvalid"
             @reset="resetGrammar"
             v-model="grammarText"
           ></grammar-input>
         </ui-tab>
 
-        <ui-tab id="explore" label="Explore">
+        <ui-tab id="search" label="Search" title="Alt + S">
+          <grammar-search
+            class="w-full h-full max-h-full"
+            ref="grammarSearch"
+            :grammar="grammarText"
+          ></grammar-search>
+        </ui-tab>
+
+        <ui-tab id="explore" label="Explore" title="Alt + X">
           <div class="w-full h-full overflow-auto">
-            <grammar-explorer :grammar="grammar" v-if="grammar"></grammar-explorer>
+            <grammar-explorer
+              ref="grammarExplorer"
+              :grammar="grammar"
+              v-if="grammar"
+            ></grammar-explorer>
           </div>
         </ui-tab>
       </ui-tabs>
@@ -28,6 +41,7 @@
     <div class="separator">
       <button
         class="text-gray-600"
+        title="Alt + Down"
         :disabled="layout === 'left-maximised'"
         @click="updateLayout('expand-left')"
       >
@@ -36,6 +50,7 @@
 
       <button
         class="text-gray-600"
+        title="Alt + Up"
         :disabled="layout === 'right-maximised'"
         @click="updateLayout('expand-right')"
       >
@@ -46,6 +61,7 @@
     <div class="w-full min-h-0 overflow-hidden">
       <grammar-analysis
         class="max-h-full overflow-y-auto"
+        ref="grammarAnalysis"
         :grammar="grammar"
       ></grammar-analysis>
     </div>
@@ -59,6 +75,7 @@ import { addShortcut } from './shortcuts'
 import GrammarInput from './components/GrammarInput.vue'
 import GrammarAnalysis from './components/GrammarAnalysis.vue'
 import GrammarExplorer from './components/GrammarExplorer.vue'
+import GrammarSearch from './components/GrammarSearch.vue'
 import UiTabs from './components/UiTabs.vue'
 import UiTab from './components/UiTab.vue'
 
@@ -104,6 +121,7 @@ export default {
     GrammarInput,
     GrammarAnalysis,
     GrammarExplorer,
+    GrammarSearch,
     UiTabs,
     UiTab,
   },
@@ -174,12 +192,23 @@ export default {
     registerShortcuts() {
       this.cleanupShortcuts = addShortcut(
         'altKey',
-        ['KeyI', 'KeyX', 'ArrowUp', 'ArrowDown'],
+        ['KeyI', 'KeyS', 'KeyX', 'KeyN', 'ArrowUp', 'ArrowDown', 'Slash'],
         (e) => {
           if (e.code === 'KeyI') {
             this.switchToTab('input')
+            this.focus('grammarInput')
+          } else if (e.code === 'KeyS') {
+            this.switchToTab('search')
+            this.focus('grammarSearch')
           } else if (e.code === 'KeyX') {
             this.switchToTab('explore')
+          } else if (e.code === 'KeyN') {
+            this.switchToTab('explore')
+            this.focus('grammarExplorer')
+          } else if (e.code === 'Slash') {
+            // Reveal the analysis if it's hidden
+            this.layout === 'left-maximised' && this.updateLayout('expand-right')
+            this.focus('grammarAnalysis')
           } else if (e.code === 'ArrowUp') {
             this.updateLayout('expand-right')
           } else if (e.code === 'ArrowDown') {
@@ -189,10 +218,16 @@ export default {
       )
     },
 
-    switchToTab(tabId) {
+    switchToTab(tabId, focusRef) {
       if (this.$refs.tabs) {
         this.$refs.tabs.selectId(tabId)
       }
+    },
+
+    focus(ref) {
+      this.$nextTick(() => {
+        this.$refs[ref] && this.$refs[ref].focus()
+      })
     },
   },
 }
@@ -255,6 +290,116 @@ export default {
         @apply ml-0 mt-1;
       }
     }
+  }
+}
+
+@function highlight-color($color) {
+  @if (lightness($color) > 75) {
+    @return $color;
+  } @else {
+    @return lighten($color, 22%);
+  }
+}
+
+mark {
+  .group-0 &,
+  &.is-0 {
+    background-color: highlight-color(#ffe119);
+  }
+
+  .group-1 &,
+  &.is-1 {
+    background-color: highlight-color(#3cb44b);
+  }
+
+  .group-2 &,
+  &.is-2 {
+    background-color: highlight-color(#e6194B);
+  }
+
+  .group-3 &,
+  &.is-3 {
+    background-color: highlight-color(#4363d8);
+  }
+
+  .group-4 &,
+  &.is-4 {
+    background-color: highlight-color(#f58231);
+  }
+
+  .group-5 &,
+  &.is-5 {
+    background-color: highlight-color(#911eb4);
+  }
+
+  .group-6 &,
+  &.is-6 {
+    background-color: highlight-color(#42d4f4);
+  }
+
+  .group-7 &,
+  &.is-7 {
+    background-color: highlight-color(#f032e6);
+  }
+
+  .group-8 &,
+  &.is-8 {
+    background-color: highlight-color(#bfef45);
+  }
+
+  .group-9 &,
+  &.is-9 {
+    background-color: highlight-color(#fabebe);
+  }
+
+  .group-10 &,
+  &.is-10 {
+    background-color: highlight-color(#469990);
+  }
+
+  .group-11 &,
+  &.is-11 {
+    background-color: highlight-color(#e6beff);
+  }
+
+  .group-12 &,
+  &.is-12 {
+    background-color: highlight-color(#9A6324);
+  }
+
+  .group-13 &,
+  &.is-13 {
+    background-color: highlight-color(#fffac8);
+  }
+
+  .group-14 &,
+  &.is-14 {
+    background-color: highlight-color(#800000);
+  }
+
+  .group-15 &,
+  &.is-15 {
+    background-color: highlight-color(#aaffc3);
+  }
+
+  .group-16 &,
+  &.is-16 {
+    background-color: highlight-color(#808000);
+  }
+
+  .group-17 &,
+  &.is-17 {
+    background-color: highlight-color(#ffd8b1);
+  }
+
+  .group-18 &,
+  &.is-18 {
+    background-color: highlight-color(#000075);
+  }
+
+  .group-19 &,
+  &.is-19 {
+    background-color: highlight-color(#a9a9a9);
   }
 }
 </style>
