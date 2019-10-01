@@ -1,5 +1,5 @@
 <template>
-  <div class="tab relative bg-white" v-show="isSelected">
+  <div class="tab h-full relative bg-white" v-show="isSelected">
     <slot></slot>
   </div>
 </template>
@@ -40,14 +40,14 @@ export default {
     this.$parent.addTab({
       id: this.id,
       label: this.label,
-      selected: this.selected
+      selected: this.selected,
     })
+  },
+
+  watch: {
+    label(newLabel) {
+      this.$parent.changeLabel(this.id, newLabel)
+    },
   },
 }
 </script>
-
-<style lang="scss">
-.tab {
-
-}
-</style>

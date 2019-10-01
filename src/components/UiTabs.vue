@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs leading-none flex flex-col">
+  <div class="tabs leading-none flex flex-col h-full">
     <div class="tabs-list bg-gray-800 flex">
       <button
         class="tab-button bg-gray-700 border-r border-gray-600 px-2 text-white outline-none"
@@ -11,7 +11,7 @@
         @click="select(tab)"
       >{{ tab.label }}</button>
     </div>
-    <div class="leading-normal" :class="[ compact ? '' : 'p-2' ]">
+    <div class="leading-normal h-full" :class="[ compact ? '' : 'p-2' ]">
       <slot></slot>
     </div>
   </div>
@@ -56,12 +56,25 @@ export default {
       }
     },
 
+    changeLabel(id, newLabel) {
+      const index = this.tabs.findIndex(t => t.id === id)
+
+      if (index !== -1) {
+        const newTab = Object.assign({}, this.tabs[index], { label: newLabel })
+        this.tabs.splice(index, 1, newTab)
+      }
+    },
+
     isSelected(tabId) {
       return tabId === this.selectedTabId
     },
 
     select(tab) {
       this.selectedTabId = tab.id
+    },
+
+    selectId(tabId) {
+      this.selectedTabId = tabId
     },
   },
 }
