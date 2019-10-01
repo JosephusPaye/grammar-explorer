@@ -61,16 +61,29 @@ import GrammarExplorer from './components/GrammarExplorer.vue'
 import UiTabs from './components/UiTabs.vue'
 import UiTab from './components/UiTab.vue'
 
-const localStorageKey = 'grammar-explorer:input'
+const localStorageLayoutKey = 'grammar-explorer:layout'
+
+function getDefaultLayout() {
+  const previousLayout = localStorage.getItem(localStorageLayoutKey)
+  return previousLayout ? previousLayout : 'default'
+}
+
+const persistLayout = debounce(layout => {
+  if (layout) {
+    localStorage.setItem(localStorageLayoutKey, layout)
+  }
+}, 200)
+
+const localStorageInputKey = 'grammar-explorer:input'
 
 function getDefaultInput() {
-  const previousInput = localStorage.getItem(localStorageKey)
+  const previousInput = localStorage.getItem(localStorageInputKey)
   return previousInput ? previousInput : CD19
 }
 
 const persistInput = debounce(input => {
   if (input) {
-    localStorage.setItem(localStorageKey, input)
+    localStorage.setItem(localStorageInputKey, input)
   }
 }, 200)
 
@@ -99,7 +112,7 @@ export default {
       grammarText: getDefaultInput(),
       grammarInvalid: false,
       grammar: undefined,
-      layout: 'default',
+      layout: getDefaultLayout(),
     }
   },
 
@@ -107,7 +120,11 @@ export default {
     grammarText(input) {
       this.parseGrammar()
       persistInput(input)
-    }
+    },
+
+    layout(layout) {
+      persistLayout(layout)
+    },
   },
 
   mounted() {
