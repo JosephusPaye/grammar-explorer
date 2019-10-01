@@ -1,5 +1,5 @@
 <template>
-  <div class="grammar-analysis border border-gray-300 p-4">
+  <div class="grammar-analysis p-4">
     <template v-if="hasGrammar">
       <input
         class="w-full border-2 border-gray-400 px-4 py-2 block mb-2 hover:border-gray-500 focus:border-blue-500 focus:outline-none"

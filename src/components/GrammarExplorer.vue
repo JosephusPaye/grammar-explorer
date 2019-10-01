@@ -14,7 +14,7 @@
         <ui-dropdown-menu
           class="bg-gray-700 text-left"
 
-          :open="dropdownOpen"
+          :open.sync="dropdownOpen"
           :options="nonTerminals"
           :selected.sync="selected"
         ></ui-dropdown-menu>

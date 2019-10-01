@@ -1,34 +1,54 @@
 <template>
-  <div id="app" class="flex flex-col h-screen">
-    <ui-tabs class="h-screen">
-      <ui-tab label="Input & Analyse" selected>
-        <div class="absolute top-0 left-0 right-0 left-0 grid">
+  <div id="app" class="app" :class="['layout-' + layout]">
+    <div class="w-full relative min-h-0 overflow-hidden">
+      <ui-tabs class="h-full w-full">
+        <ui-tab label="Input" selected>
           <grammar-input
-            class="max-h-full"
+            class="w-full h-full max-h-full"
             :invalid="grammarInvalid"
             @reset="resetGrammar"
             v-model="grammarText"
           ></grammar-input>
+        </ui-tab>
 
-          <grammar-analysis
-            class="max-h-full overflow-y-auto"
-            :grammar="grammar"
-          ></grammar-analysis>
-        </div>
-      </ui-tab>
+        <ui-tab label="Explore">
+          <div class="w-full h-full overflow-auto">
+            <grammar-explorer :grammar="grammar" v-if="grammar"></grammar-explorer>
+          </div>
+        </ui-tab>
+      </ui-tabs>
 
-      <ui-tab label="Explore">
-        <div class="explorer-wrapper">
-          <grammar-explorer :grammar="grammar" v-if="grammar"></grammar-explorer>
-        </div>
-      </ui-tab>
-    </ui-tabs>
+      <a
+        class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2"
+        href="mailto:c3211849@uon.edu.au"
+        title="Email me at c3211849@uon.edu.au"
+      >🐞 Found an issue?</a>
+    </div>
 
-    <a
-      class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2"
-      href="mailto:c3211849@uon.edu.au"
-      title="Email me at c3211849@uon.edu.au"
-    >🐞 Found an issue?</a>
+    <div class="separator">
+      <button
+        class="text-gray-600"
+        :disabled="layout === 'left-maximised'"
+        @click="updateLayout('expand-left')"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-down"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      </button>
+
+      <button
+        class="text-gray-600"
+        :disabled="layout === 'right-maximised'"
+        @click="updateLayout('expand-right')"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+      </button>
+    </div>
+
+    <div class="w-full min-h-0 overflow-hidden">
+      <grammar-analysis
+        class="max-h-full overflow-y-auto"
+        :grammar="grammar"
+      ></grammar-analysis>
+    </div>
   </div>
 </template>
 
@@ -79,6 +99,7 @@ export default {
       grammarText: getDefaultInput(),
       grammarInvalid: false,
       grammar: undefined,
+      layout: 'default',
     }
   },
 
@@ -111,42 +132,81 @@ export default {
     resetGrammar() {
       this.grammarText = CD19
     },
+
+    updateLayout(action) {
+      switch (this.layout) {
+        case 'default':
+          this.layout = action === 'expand-left' ? 'left-maximised' : 'right-maximised'
+          break
+        case 'left-maximised':
+          this.layout = action === 'expand-left' ? this.layout : 'default'
+          break
+        case 'right-maximised':
+          this.layout = action === 'expand-left' ? 'default' : this.layout
+          break
+      }
+    },
   },
 }
 </script>
 
 <style src="./assets/tailwind.css"></style>
 <style lang="scss">
-.grid {
+.app {
+  height: 100vh;
   display: grid;
-  height: calc(100vh - 44px);
-  grid-column: 1;
-  grid-row: 2;
-
-  .grammar-analysis {
-    border-top-width: 0;
-  }
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 28px 1fr;
 
   @screen lg {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 28px 1fr;
     grid-template-rows: 1fr;
+  }
 
-    .grammar-analysis {
-      border-top-width: 1px;
-      border-left-width: 0;
+  &.layout-left-maximised {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 28px 0;
+
+    @screen lg {
+      grid-template-columns: 1fr 28px 0;
+      grid-template-rows: 1fr;
+    }
+  }
+
+  &.layout-right-maximised {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0 28px 1fr;
+
+    @screen lg {
+      grid-template-columns: 0 28px 1fr;
+      grid-template-rows: 1fr;
     }
   }
 }
 
-.explorer-wrapper {
-  @apply absolute top-0 left-0 right-0 left-0 overflow-auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  width: 100vw;
-  margin-left: -8px;
-  margin-top: -8px;
-  padding: 8px;
-  height: calc(100vh - 31px);
+.separator {
+  @apply flex-shrink-0 flex items-center justify-center bg-gray-100 border-gray-300 border-t border-b;
+
+  button {
+    &[disabled] {
+      opacity: 0.4;
+    }
+
+    &:not(:first-child) {
+      @apply ml-1;
+    }
+  }
+
+  @screen lg {
+    @apply border-l border-r flex-col;
+
+    button {
+      transform: rotate(-90deg);
+
+      &:not(:first-child) {
+        @apply ml-0 mt-1;
+      }
+    }
+  }
 }
 </style>

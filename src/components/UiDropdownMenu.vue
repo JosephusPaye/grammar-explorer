@@ -7,14 +7,15 @@
       ref="inputEl"
 
       @click.stop
+      @keydown.enter="selectFirst"
 
       v-model="filter"
     >
-    <div class="overflow-y-scroll" :style="{ 'max-height': `calc(100vh - ${screenOffset}px)` }">
+    <div class="overflow-y-auto" :style="{ 'max-height': `calc(100vh - ${screenOffset}px)` }">
       <div
-        class="leading-relaxed px-2 cursor-pointer hover:bg-gray-900"
+        class="leading-relaxed px-2 cursor-pointer hover:bg-gray-800"
         :class="{
-          'is-selected bg-gray-800': option.value === selected.value,
+          'is-selected bg-blue-500 text-white': option.value === selected.value,
         }"
 
         v-for="option in filteredOptions"
@@ -69,8 +70,19 @@ export default {
   },
 
   methods: {
+    selectFirst() {
+      const first = this.filteredOptions[0]
+
+      if (first) {
+        this.select(first)
+        this.$emit('update:open', false)
+      }
+    },
+
     select(option) {
-      this.$emit('update:selected', option)
+      if (option) {
+        this.$emit('update:selected', option)
+      }
     },
   },
 }
