@@ -72,6 +72,10 @@ export default {
     select(tab) {
       this.selectedTabId = tab.id
     },
+
+    selectId(tabId) {
+      this.selectedTabId = tabId
+    },
   },
 }
 </script>

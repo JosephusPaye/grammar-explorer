@@ -12,7 +12,21 @@ export function parse(text, label) {
   return grammar
 }
 
-function test() {
+function logDetails() {
+    const shortcuts = `
+Alt + Up:     Expand right/bottom panel
+Alt + Down:   Expand left/top panel
+Alt + I:      Select Input tab
+Alt + X:      Select Explore tab
+Alt + X + N:  Select Explore tab and open non-terminal selector
+Alt + /:      Focus non-terminal filter
+    `.trim()
+
+  console.log('Keyboard shortcuts:')
+  console.log(shortcuts)
+
+  console.groupCollapsed('example grammar')
+
   console.log('example grammar source:')
   console.log(FirstAndFollow)
 
@@ -20,6 +34,8 @@ function test() {
 
   console.log('example grammar parsed:')
   console.log(grammar)
+
+  console.groupEnd('example grammar')
 }
 
-test()
+logDetails()

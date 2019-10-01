@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { addShortcut } from '../shortcuts'
 import UiNonTerminal from './UiNonTerminal.vue'
 import UiDropdownMenu from './UiDropdownMenu.vue'
 
@@ -49,6 +50,7 @@ export default {
     return {
       dropdownOpen: false,
       selected: Object.values(this.grammar)[0],
+      cleanupShortcuts: null,
     }
   },
 
@@ -56,6 +58,20 @@ export default {
     nonTerminals() {
       return Object.values(this.grammar)
     },
+  },
+
+  mounted() {
+    this.cleanupShortcuts = addShortcut(
+      'altKey',
+      ['KeyN'],
+      () => {
+        this.dropdownOpen = true
+      }
+    )
+  },
+
+  beforeDestroy() {
+    this.cleanupShortcuts && this.cleanupShortcuts()
   },
 
   watch: {

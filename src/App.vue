@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="app" :class="['layout-' + layout]">
     <div class="w-full relative min-h-0 overflow-hidden">
-      <ui-tabs class="h-full w-full">
-        <ui-tab label="Input" selected>
+      <ui-tabs class="h-full w-full" ref="tabs">
+        <ui-tab id="input" label="Input" selected>
           <grammar-input
             class="w-full h-full max-h-full"
             :invalid="grammarInvalid"
@@ -11,7 +11,7 @@
           ></grammar-input>
         </ui-tab>
 
-        <ui-tab label="Explore">
+        <ui-tab id="explore" label="Explore">
           <div class="w-full h-full overflow-auto">
             <grammar-explorer :grammar="grammar" v-if="grammar"></grammar-explorer>
           </div>
@@ -55,6 +55,7 @@
 <script>
 import debounce from 'debounce'
 import { parse, CD19 } from './grammar'
+import { addShortcut } from './shortcuts'
 import GrammarInput from './components/GrammarInput.vue'
 import GrammarAnalysis from './components/GrammarAnalysis.vue'
 import GrammarExplorer from './components/GrammarExplorer.vue'
@@ -113,6 +114,7 @@ export default {
       grammarInvalid: false,
       grammar: undefined,
       layout: getDefaultLayout(),
+      cleanupShortcuts: null,
     }
   },
 
@@ -129,6 +131,11 @@ export default {
 
   mounted() {
     this.parseGrammar()
+    this.registerShortcuts()
+  },
+
+  beforeDestroy() {
+    this.cleanupShortcuts && this.cleanupShortcuts()
   },
 
   methods: {
@@ -161,6 +168,30 @@ export default {
         case 'right-maximised':
           this.layout = action === 'expand-left' ? 'default' : this.layout
           break
+      }
+    },
+
+    registerShortcuts() {
+      this.cleanupShortcuts = addShortcut(
+        'altKey',
+        ['KeyI', 'KeyX', 'ArrowUp', 'ArrowDown'],
+        (e) => {
+          if (e.code === 'KeyI') {
+            this.switchToTab('input')
+          } else if (e.code === 'KeyX') {
+            this.switchToTab('explore')
+          } else if (e.code === 'ArrowUp') {
+            this.updateLayout('expand-right')
+          } else if (e.code === 'ArrowDown') {
+            this.updateLayout('expand-left')
+          }
+        }
+      )
+    },
+
+    switchToTab(tabId) {
+      if (this.$refs.tabs) {
+        this.$refs.tabs.selectId(tabId)
       }
     },
   },
