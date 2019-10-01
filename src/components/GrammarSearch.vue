@@ -11,7 +11,7 @@
 
     <div v-if="filteredLines.length > 0" class="flex-grow overflow-y-auto">
       <div
-        class="font-mono whitespace-pre bg-gray-400 px-1 leading-relaxed"
+        class="table w-full font-mono whitespace-pre bg-gray-400 px-1 leading-relaxed"
         style="margin-bottom: 2px"
         v-for="line in filteredLines"
         v-html="line.highlighted"
