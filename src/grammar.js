@@ -1,8 +1,8 @@
-import { CD19, CircularLeftRecursion, FirstAndFollow } from './grammar/samples'
+import { CD19, CD19NodeRules, CircularLeftRecursion, FirstAndFollow } from './grammar/samples'
 import { parse as parseGrammar } from './grammar/parser'
 import { analyse } from './grammar/analyser'
 
-export { CD19 }
+export { CD19, CD19NodeRules }
 
 export function parse(text, label) {
   const grammar = parseGrammar(text, label)

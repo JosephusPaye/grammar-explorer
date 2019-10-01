@@ -70,7 +70,7 @@
 
 <script>
 import debounce from 'debounce'
-import { parse, CD19 } from './grammar'
+import { parse, CD19, CD19NodeRules } from './grammar'
 import { addShortcut } from './shortcuts'
 import GrammarInput from './components/GrammarInput.vue'
 import GrammarAnalysis from './components/GrammarAnalysis.vue'
@@ -171,8 +171,8 @@ export default {
       }
     },
 
-    resetGrammar() {
-      this.grammarText = CD19
+    resetGrammar(useNodeGrammar = false) {
+      this.grammarText = useNodeGrammar ? CD19NodeRules : CD19
     },
 
     updateLayout(action) {
