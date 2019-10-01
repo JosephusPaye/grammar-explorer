@@ -67,8 +67,13 @@ function firstOfElement(element) {
  * Algorithm adapted from https://www.jambe.co.nz/UNI/FirstAndFollowSets.html
  */
 function firstOfList(elements) {
-  // If there's only one element in the list, defer to firstOfElement
+  // For an empty element list
   if (elements.length === 0) {
+    return new EnhancedSet()
+  }
+
+  // If there's only one element in the list, defer to firstOfElement
+  if (elements.length === 1) {
     return firstOfElement(elements[0])
   }
 
@@ -87,7 +92,7 @@ function firstOfList(elements) {
   firstSet.addAll(firstOfStartingElement.except(epsilon))
 
   // Add everything in FIRST(Y2..Yk)
-  firstSet.addAll(elements.slice(1))
+  firstSet.addAll(firstOfList(elements.slice(1)))
 
   // If the individual first FIRST(Y1), FIRST(Y2), ..., FIRST(Yk) all contain epsilon
   // then add epsilon to FIRST(Y1Y2..Yk) as well
