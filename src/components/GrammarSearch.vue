@@ -101,7 +101,7 @@ export default {
 
             result.highlights.push({
               placeholder,
-              replacement: `<mark class="is-${i}">${match.value}</mark>`,
+              replacement: `<mark class="is-${i}">${escapeTags(match.value)}</mark>`,
             })
           }
         })

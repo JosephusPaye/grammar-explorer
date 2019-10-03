@@ -5,8 +5,10 @@ const epsilon = new Epsilon()
 const endOfInput = new Terminal('$')
 
 export function addFirsts(grammar) {
+  const firstCache = new Map()
+
   Object.values(grammar).forEach(nonTerminal => {
-    nonTerminal.firstSet = firstOfElement(nonTerminal)
+    nonTerminal.firstSet = firstOfElement(nonTerminal, firstCache)
 
     if (nonTerminal.firstSetWarnings.length > 0) {
       const label = `FIRST of ${nonTerminal.value}`
@@ -21,10 +23,14 @@ export function addFirsts(grammar) {
  * Compute the FIRST set of the given element.
  * Algorithm adapted from https://www.jambe.co.nz/UNI/FirstAndFollowSets.html
  */
-function firstOfElement(element) {
+function firstOfElement(element, firstCache) {
   // Defer to firstOfList if we have a list of elements Y1...Yk
   if (Array.isArray(element)) {
-    return firstOfList(element)
+    return firstOfList(element, firstCache)
+  }
+
+  if (firstCache.has(element.value)) {
+    return firstCache.get(element.value)
   }
 
   // FIRST of epsilon is just { epsilon }
@@ -50,14 +56,16 @@ function firstOfElement(element) {
   element.allProductions().forEach(production => {
     // If the production has only one element which is epsilon, add epsilon to the first set
     if (production.elements.length === 1 && production.elements[0] && production.elements[0].isEpsilon()) {
-      firstSet.add(production.elements[0])
+      firstSet.add(epsilon)
     }
     // Otherwise, compute the first of the list of production elements and add everything
     // in that to the first set constructed for the non terminal so far
     else {
-      firstSet.addAll(firstOfList(production.elements))
+      firstSet.addAll(firstOfList(production.elements, firstCache))
     }
   })
+
+  firstCache.set(element.value, firstSet)
 
   return firstSet
 }
@@ -66,7 +74,7 @@ function firstOfElement(element) {
  * Compute the FIRST set of a list of elements Y1..Yk
  * Algorithm adapted from https://www.jambe.co.nz/UNI/FirstAndFollowSets.html
  */
-function firstOfList(elements) {
+function firstOfList(elements, firstCache) {
   // For an empty element list
   if (elements.length === 0) {
     return new EnhancedSet()
@@ -74,11 +82,11 @@ function firstOfList(elements) {
 
   // If there's only one element in the list, defer to firstOfElement
   if (elements.length === 1) {
-    return firstOfElement(elements[0])
+    return firstOfElement(elements[0], firstCache)
   }
 
   // Get FIRST(Y1)
-  const firstOfStartingElement = firstOfElement(elements[0])
+  const firstOfStartingElement = firstOfElement(elements[0], firstCache)
 
   // If FIRST(Y1) doesn't include epsilon, then FIRST(Y1..Yk) is just FIRST(Y1)
   if (!firstOfStartingElement.has(epsilon)) {
@@ -92,13 +100,7 @@ function firstOfList(elements) {
   firstSet.addAll(firstOfStartingElement.except(epsilon))
 
   // Add everything in FIRST(Y2..Yk)
-  firstSet.addAll(firstOfList(elements.slice(1)))
-
-  // If the individual first FIRST(Y1), FIRST(Y2), ..., FIRST(Yk) all contain epsilon
-  // then add epsilon to FIRST(Y1Y2..Yk) as well
-  if (!firstSet.has(epsilon) && elements.map(firstOfElement).every(set => set.has(epsilon))) {
-    firstSet.add(epsilon)
-  }
+  firstSet.addAll(firstOfList(elements.slice(1), firstCache))
 
   return firstSet
 }
