@@ -84,4 +84,29 @@ export class EnhancedSet {
   toArray() {
     return Array.from(this.set)
   }
+
+  equals(otherSet) {
+    const setA = this.toArray().map(element => element.value).sort()
+    const setB = otherSet.toArray().map(element => element.value).sort()
+
+    if (setA.length !== setB.length) {
+      return false
+    }
+
+    for (let i = 0; i < setA.length; i++) {
+      if (setA[i] !== setB[i]) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  someEquals(otherSet) {
+    return this.toArray().some(element => {
+      return otherSet.toArray().some(otherElement => {
+        return element.equals(otherElement)
+      })
+    })
+  }
 }

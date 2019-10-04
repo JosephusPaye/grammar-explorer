@@ -101,14 +101,31 @@ function maybeAddWarning(elementA, elementB, reportedWarnings, warnings) {
   }
 
   if (elementA.isNonTerminal() && elementB.isNonTerminal()) {
+    // There's no warning if no item in elementA's first set is in elementB's first set
+    if (!elementA.firstSet.someEquals(elementB.firstSet)) {
+      return
+    }
+
     warnings.push(
       `${elementA.value} and ${elementB.value}: non-terminals don't match, might need expansion to check prefix`
     )
   } else if (elementA.isNonTerminal()) {
+    // There's no warning if elementA (the non-terminal) doesn't have
+    // elementB (the terminal) in its first set
+    if (!elementA.firstSet.has(elementB)) {
+      return
+    }
+
     warnings.push(
       `${elementA.value} and ${elementB.value}: non-terminal and terminal don't match, might need expansion to check prefix`
     )
   } else {
+    // There's no warning if elementB (the non-terminal) doesn't have
+    // elementA (the terminal) in its first set
+    if (!elementB.firstSet.has(elementA)) {
+      return
+    }
+
     warnings.push(
       `${elementB.value} and ${elementA.value}: non-terminal and terminal don't match, might need expansion to check prefix`
     )

@@ -6,10 +6,6 @@ export function analyse(grammar, label) {
   checkForLeftRecursion(grammar)
   checkForRightRecursion(grammar)
 
-  console.groupCollapsed(label + ' common prefix check warnings')
-  checkForCommonPrefix(grammar)
-  console.groupEnd(label + ' common prefix check warnings')
-
   console.groupCollapsed(label + ' FIRST set warnings')
   addFirsts(grammar)
   console.groupEnd(label + ' FIRST set warnings')
@@ -17,4 +13,8 @@ export function analyse(grammar, label) {
   console.groupCollapsed(label + ' FOLLOW set warnings')
   addFollows(grammar)
   console.groupEnd(label + ' FOLLOW set warnings')
+
+  console.groupCollapsed(label + ' common prefix check warnings')
+  checkForCommonPrefix(grammar)
+  console.groupEnd(label + ' common prefix check warnings')
 }
