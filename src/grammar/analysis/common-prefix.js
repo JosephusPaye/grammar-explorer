@@ -1,3 +1,7 @@
+import { Epsilon } from '../models'
+
+const epsilon = new Epsilon()
+
 export function checkForCommonPrefix(grammar) {
   Object.values(grammar).forEach(nonTerminal => {
     let productions = nonTerminal.allProductions()
@@ -101,8 +105,10 @@ function maybeAddWarning(elementA, elementB, reportedWarnings, warnings) {
   }
 
   if (elementA.isNonTerminal() && elementB.isNonTerminal()) {
-    // There's no warning if no item in elementA's first set is in elementB's first set
-    if (!elementA.firstSet.someEquals(elementB.firstSet)) {
+    // There's no warning if no item in elementA's first set is in elementB's first set.
+    // This check excludes Epsilon, since if the only thing common in the elements'
+    // first set is Epsilon, then they don't really have a common prefix.
+    if (elementA.firstSet.except(epsilon).isDisjoint(elementB.firstSet.except(epsilon))) {
       return
     }
 

@@ -109,4 +109,8 @@ export class EnhancedSet {
       })
     })
   }
+
+  isDisjoint(otherSet) {
+    return !this.someEquals(otherSet)
+  }
 }
