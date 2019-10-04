@@ -7,7 +7,10 @@ export function parse(text, label) {
 
   const grammar = {}
 
-  const rules = text.trim().split('\n').map(rule => rule.trim())
+  const rules = text.trim()
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
 
   rules.forEach(rule => {
     const [nonTerminal, production] = rule.split('::=').map(part => part.trim())
