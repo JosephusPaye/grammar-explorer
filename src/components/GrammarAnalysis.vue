@@ -13,16 +13,19 @@
 
         <div>
           <label class="inline-flex items-center mr-4 cursor-pointer">
-            <input type="checkbox" v-model="filterLeftRecursion" class="mr-1"> Left Recursion
+            <input type="checkbox" v-model="filterNullable" class="mr-1"> Nullable ({{ nullableCount }})
           </label>
           <label class="inline-flex items-center mr-4 cursor-pointer">
-            <input type="checkbox" v-model="filterRightRecursion" class="mr-1"> Right Recursion
+            <input type="checkbox" v-model="filterLeftRecursion" class="mr-1"> Left Recursion ({{ leftRecursiveCount }})
           </label>
           <label class="inline-flex items-center mr-4 cursor-pointer">
-            <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix
+            <input type="checkbox" v-model="filterRightRecursion" class="mr-1"> Right Recursion ({{ rightRecursiveCount }})
           </label>
           <label class="inline-flex items-center mr-4 cursor-pointer">
-            <input type="checkbox" v-model="filterFirstSetWarnings" class="mr-1"> FIRST set warnings
+            <input type="checkbox" v-model="filterCommonPrefix" class="mr-1"> Common Prefix ({{ commonPrefixCount }})
+          </label>
+          <label class="inline-flex items-center mr-4 cursor-pointer">
+            <input type="checkbox" v-model="filterFirstSetWarnings" class="mr-1"> FIRST set warnings ({{ firstSetWarningsCount }})
           </label>
         </div>
       </div>
@@ -69,6 +72,7 @@ export default {
   data() {
     return {
       filter: '',
+      filterNullable: false,
       filterLeftRecursion: false,
       filterRightRecursion: false,
       filterCommonPrefix: false,
@@ -91,6 +95,11 @@ export default {
         .map(nonTerminal => {
           return {
             value: nonTerminal.value,
+            isNullable: nonTerminal.isNullable,
+            isLeftRecursive: nonTerminal.leftRecursion.exists,
+            isRightRecursive: nonTerminal.rightRecursion.exists,
+            hasCommonPrefix: nonTerminal.commonPrefixes.exist || nonTerminal.commonPrefixes.warnings.length > 0,
+            hasFirstSetWarnings: nonTerminal.firstSetWarnings.length > 0,
             tabs: [
               {
                 id: nextId(),
@@ -140,6 +149,36 @@ export default {
           }
         })
     },
+
+    nullableCount() {
+      return this.nonTerminals.filter(nonTerminal => {
+        return nonTerminal.isNullable
+      }).length
+    },
+
+    leftRecursiveCount() {
+      return this.nonTerminals.filter(nonTerminal => {
+        return nonTerminal.isLeftRecursive
+      }).length
+    },
+
+    rightRecursiveCount() {
+      return this.nonTerminals.filter(nonTerminal => {
+        return nonTerminal.isRightRecursive
+      }).length
+    },
+
+    commonPrefixCount() {
+      return this.nonTerminals.filter(nonTerminal => {
+        return nonTerminal.hasCommonPrefix
+      }).length
+    },
+
+    firstSetWarningsCount() {
+      return this.nonTerminals.filter(nonTerminal => {
+        return nonTerminal.hasFirstSetWarnings
+      }).length
+    },
   },
 
   methods: {
@@ -156,6 +195,10 @@ export default {
         if (!targets.some(target => value.includes(target))) {
           return false
         }
+      }
+
+      if (this.filterNullable && !nonTerminal.isNullable) {
+        return false
       }
 
       if (this.filterLeftRecursion && !nonTerminal.leftRecursion.exists) {

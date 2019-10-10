@@ -1,7 +1,10 @@
 <template>
   <div class="non-terminal-analysis">
-    <div class="font-mono px-2 py-1 lg:p-2 bg-blue-600 text-white">
-      {{ nonTerminal.value }}
+    <div class="font-mono px-2 py-1 lg:p-2 bg-blue-600 text-white flex lg:block">
+      <div class="pr-2">{{ nonTerminal.value }}</div>
+      <div class="text-base font-medium w-6 h-6 rounded-full text-white bg-blue-800 flex text-center items-center justify-center leading-none" v-if="nonTerminal.isNullable">
+        <span>Ɛ</span>
+      </div>
     </div>
     <ui-tabs class="w-full border border-gray-800 min-w-0" compact>
       <ui-tab
