@@ -10,7 +10,7 @@ export function parse(text, label) {
   const rules = text.trim()
     .split('\n')
     .map(line => line.trim())
-    .filter(line => line.length > 0)
+    .filter(line => line.length > 0 && !line.startsWith('//'))
 
   rules.forEach(rule => {
     const [nonTerminal, production] = rule.split('::=').map(part => part.trim())
