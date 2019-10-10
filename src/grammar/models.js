@@ -14,12 +14,16 @@ export class Production {
   }
 }
 
+window.GProduction = Production
+
 export class ProductionOption {
   constructor() {
     this.id = nextId()
     this.elements = []
   }
 }
+
+window.GProductionOption = ProductionOption
 
 export class Element {
   constructor() {
@@ -47,6 +51,8 @@ export class Element {
   }
 }
 
+window.GElement = Element
+
 export class NonTerminal extends Element {
   constructor(value = '') {
     super()
@@ -54,6 +60,7 @@ export class NonTerminal extends Element {
     this.value = value
     this.productions = []
     this.isStartSymbol = false
+    this.isNullable = false
 
     this.leftRecursion = {
       exists: false,
@@ -89,6 +96,8 @@ export class NonTerminal extends Element {
   }
 }
 
+window.GNonTerminal = NonTerminal
+
 export class Terminal extends Element {
   constructor(value = '') {
     super()
@@ -96,9 +105,13 @@ export class Terminal extends Element {
   }
 }
 
+window.GTerminal = Terminal
+
 export class Epsilon extends Element {
   constructor() {
     super()
     this.value = 'ε'
   }
 }
+
+window.GEpsilon = Epsilon

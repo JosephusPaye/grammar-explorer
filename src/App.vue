@@ -165,6 +165,7 @@ export default {
       if (valid) {
         this.grammar = grammar
         this.grammarInvalid = false
+        window.grammar = grammar
       } else {
         // console.error(err)
         this.grammarInvalid = true
