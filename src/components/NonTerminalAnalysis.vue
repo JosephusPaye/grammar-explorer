@@ -1,8 +1,8 @@
 <template>
   <div class="non-terminal-analysis">
-    <div class="font-mono px-2 py-1 lg:p-2 bg-blue-600 text-white flex lg:block">
+    <div class="font-mono px-2 py-1 bg-blue-600 text-white flex items-center">
       <div class="pr-2">{{ nonTerminal.value }}</div>
-      <div class="text-base font-medium w-6 h-6 rounded-full text-white bg-blue-800 flex text-center items-center justify-center leading-none" v-if="nonTerminal.isNullable">
+      <div class="text-sm font-medium w-5 h-5 rounded-full text-white bg-blue-800 flex text-center items-center justify-center leading-none cursor-default" v-if="nonTerminal.isNullable" title="Nullable">
         <span>Ɛ</span>
       </div>
     </div>
@@ -60,11 +60,6 @@ export default {
   display: grid;
   grid-column: 1;
   grid-row: 2;
-
-  @screen lg {
-    grid-template-columns: 8rem 1fr;
-    grid-template-rows: 1fr;
-  }
 
   .tab-content {
     display: grid;

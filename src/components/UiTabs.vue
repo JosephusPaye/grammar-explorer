@@ -1,6 +1,6 @@
 <template>
   <div class="tabs leading-none flex flex-col h-full">
-    <div class="tabs-list bg-gray-800 flex">
+    <div class="tabs-list bg-gray-700 flex">
       <button
         class="tab-button bg-gray-700 border-r border-gray-600 px-2 text-white outline-none"
 
@@ -87,10 +87,6 @@ export default {
 
   &.selected {
     @apply text-gray-900 bg-white;
-  }
-
-  &:last-child {
-    border-right: none!important;
   }
 }
 </style>
