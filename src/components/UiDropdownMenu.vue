@@ -3,7 +3,7 @@
     <input
       type="text"
       placeholder="Filter..."
-      class="leading-loose bg-gray-800 px-2 text-white border-b border-gray-700"
+      class="leading-loose bg-gray-800 px-2 text-white border-b border-gray-700 w-full"
       ref="inputEl"
 
       @click.stop
