@@ -13,8 +13,9 @@
 
     <button
       class="absolute top-0 right-0 mt-1 mr-6 text-sm leading-none py-1 px-2 bg-blue-200 border border-blue-300 opacity-50 hover:opacity-100 focus:opacity-100"
-      @click="$emit('reset')"
-      @click.ctrl="$emit('reset', true)"
+      @click.exact="$emit('reset')"
+      @click.ctrl.exact="$emit('reset', true)"
+      title="Load grammar for CD19, the language used for the Compiler Design course in 2019 at UON"
     >
       Load CD19
     </button>
