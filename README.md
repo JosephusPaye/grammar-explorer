@@ -2,7 +2,9 @@
 
 Analyse, search, and interactively explore context free grammars. <https://peaceful-bhabha-5a131e.netlify.com/>
 
-This project is released as a part of [#CreateWeekly](https://dev.to/josephuspaye/createweekly-create-something-new-publicly-every-week-in-2020-1nh9), my attempt to create something new publicly every week in 2020. Originally written in 2019.
+This project is released as a part of [#CreateWeekly](https://dev.to/josephuspaye/createweekly-create-something-new-publicly-every-week-in-2020-1nh9), my attempt to create something new publicly every week in 2020.
+
+Was originally written in 2019 when I did [COMP3290: Compiler Design](https://www.newcastle.edu.au/course/COMP3290).
 
 ## Features
 
