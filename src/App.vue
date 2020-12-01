@@ -33,8 +33,8 @@
 
       <a
         class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2"
-        href="mailto:c3211849@uon.edu.au"
-        title="Email me at c3211849@uon.edu.au"
+        href="https://github.com/JosephusPaye/grammar-explorer/issues/new"
+        title="Report on GitHub"
         >🐞 Found an issue?</a
       >
     </div>
