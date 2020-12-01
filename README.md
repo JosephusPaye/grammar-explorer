@@ -1,35 +1,32 @@
-# grammar-explorer
+# Grammar Explorer
 
-## Project setup
+Analyse, search, and interactively explore context free grammars. <https://peaceful-bhabha-5a131e.netlify.com/>
 
-```
-yarn install
-```
+This project is released as a part of [#CreateWeekly](https://dev.to/josephuspaye/createweekly-create-something-new-publicly-every-week-in-2020-1nh9), my attempt to create something new publicly every week in 2020. Originally written in 2019.
 
-### Compiles and hot-reloads for development
+## Features
 
-```
-yarn run serve
-```
+### Analyse
 
-### Compiles and minifies for production
+You can analyse non-terminals in the grammar, to:
 
-```
-yarn run build
-```
+- find left and right recursion
+- compute common prefixes
+- compute FIRST and FOLLOW sets
+- find nullable non-terminals
 
-### Run your tests
+### Search
 
-```
-yarn run test
-```
+You can filter the list of non terminals by one or more terms concurrently. This feature handily beats <kbd>Ctrl</kbd>+<kbd>F</kbd> in a PDF file!
 
-### Lints and fixes files
+### Explore
 
-```
-yarn run lint
-```
+You can interactively expand non-terminals (recursively even!) and see possible derivations.
 
-### Customize configuration
+## Contributing
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [contribution guide](CONTRIBUTING.md).
+
+## Licence
+
+[MIT](LICENCE)
