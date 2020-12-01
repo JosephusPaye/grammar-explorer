@@ -14,7 +14,6 @@
 
         <ui-dropdown-menu
           class="bg-gray-700 text-left"
-
           :open.sync="dropdownOpen"
           :options="nonTerminals"
           :selected.sync="selected"
@@ -31,8 +30,8 @@
 </template>
 
 <script>
-import UiNonTerminal from './UiNonTerminal.vue'
-import UiDropdownMenu from './UiDropdownMenu.vue'
+import UiNonTerminal from './UiNonTerminal.vue';
+import UiDropdownMenu from './UiDropdownMenu.vue';
 
 export default {
   name: 'GrammarExplorer',
@@ -51,31 +50,31 @@ export default {
       dropdownOpen: false,
       selected: Object.values(this.grammar)[0],
       cleanupShortcuts: null,
-    }
+    };
   },
 
   computed: {
     nonTerminals() {
-      return Object.values(this.grammar)
+      return Object.values(this.grammar);
     },
   },
 
   watch: {
     grammar() {
-      this.selected = Object.values(this.grammar)[0]
+      this.selected = Object.values(this.grammar)[0];
     },
   },
 
   methods: {
     focus() {
-      this.dropdownOpen = true
+      this.dropdownOpen = true;
     },
   },
-}
+};
 </script>
 
 <style>
 .p-2 {
-  padding: 0.4rem!important;
+  padding: 0.4rem !important;
 }
 </style>

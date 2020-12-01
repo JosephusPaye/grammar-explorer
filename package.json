@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "format": "prettier --write \"src/**/*.{vue,js,css}\" \"*.{js,json,md}\""
   },
   "dependencies": {
     "core-js": "^2.6.5",
@@ -17,11 +18,17 @@
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
     "node-sass": "^4.9.0",
+    "prettier": "^2.2.1",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.10"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true
+  }
 }

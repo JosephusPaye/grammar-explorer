@@ -3,16 +3,19 @@
     <div class="tabs-list bg-gray-700 flex">
       <button
         class="tab-button bg-gray-700 border-r border-gray-600 px-2 text-white outline-none"
-
-        :class="[{ selected: tab.id === selectedTabId }, compact ? 'text-sm py-2' : 'py-2']"
+        :class="[
+          { selected: tab.id === selectedTabId },
+          compact ? 'text-sm py-2' : 'py-2',
+        ]"
         :key="tab.id"
         :title="tab.title"
-
         v-for="tab in tabs"
         @click="select(tab)"
-      >{{ tab.label }}</button>
+      >
+        {{ tab.label }}
+      </button>
     </div>
-    <div class="leading-normal h-full" :class="[ compact ? '' : 'p-2' ]">
+    <div class="leading-normal h-full" :class="[compact ? '' : 'p-2']">
       <slot></slot>
     </div>
   </div>
@@ -30,60 +33,60 @@ export default {
     return {
       selectedTabId: '',
       tabs: [],
-    }
+    };
   },
 
   provide() {
-    const tabContext = {}
+    const tabContext = {};
 
     Object.defineProperty(tabContext, 'selectedTabId', {
       enumerable: true,
       get: () => this.selectedTabId,
-    })
+    });
 
-    return { tabContext }
+    return { tabContext };
   },
 
   methods: {
     addTab(tab) {
-      if (this.tabs.some(t => t.id === tab.id)) {
-        return
+      if (this.tabs.some((t) => t.id === tab.id)) {
+        return;
       }
 
-      this.tabs.push(tab)
+      this.tabs.push(tab);
 
       if (tab.selected) {
-        this.selectedTabId = tab.id
+        this.selectedTabId = tab.id;
       }
     },
 
     changeLabel(id, newLabel) {
-      const index = this.tabs.findIndex(t => t.id === id)
+      const index = this.tabs.findIndex((t) => t.id === id);
 
       if (index !== -1) {
-        const newTab = Object.assign({}, this.tabs[index], { label: newLabel })
-        this.tabs.splice(index, 1, newTab)
+        const newTab = Object.assign({}, this.tabs[index], { label: newLabel });
+        this.tabs.splice(index, 1, newTab);
       }
     },
 
     isSelected(tabId) {
-      return tabId === this.selectedTabId
+      return tabId === this.selectedTabId;
     },
 
     select(tab) {
-      this.selectedTabId = tab.id
+      this.selectedTabId = tab.id;
     },
 
     selectId(tabId) {
-      this.selectedTabId = tabId
+      this.selectedTabId = tabId;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
 .tab-button {
-  outline: none!important;
+  outline: none !important;
 
   &.selected {
     @apply text-gray-900 bg-white;

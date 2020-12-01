@@ -6,18 +6,16 @@
       :selected-element="selectedElement"
       :selected-element-offset="selectedElementOffset"
       :key="option.id"
-
       @select="selectElement"
       @deselect="deselectElement"
-
       v-for="option in production.options"
     ></ui-production-option>
   </div>
 </template>
 
 <script>
-import { Production } from '../grammar/models'
-import UiProductionOption from './UiProductionOption.vue'
+import { Production } from '../grammar/models';
+import UiProductionOption from './UiProductionOption.vue';
 
 export default {
   name: 'UiProduction',
@@ -35,27 +33,27 @@ export default {
       selectedOption: undefined,
       selectedElement: undefined,
       selectedElementOffset: 0,
-    }
+    };
   },
 
   methods: {
     selectElement(offset, element, option) {
-      this.selectedElement = element
-      this.selectedElementOffset = offset
-      this.selectedOption = option
+      this.selectedElement = element;
+      this.selectedElementOffset = offset;
+      this.selectedOption = option;
     },
 
     deselectElement(element, option) {
-      this.selectedOption = undefined
-      this.selectedElement = undefined
-      this.selectedElementOffset = 0
-    }
+      this.selectedOption = undefined;
+      this.selectedElement = undefined;
+      this.selectedElementOffset = 0;
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">
 .production:last-child {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
 </style>

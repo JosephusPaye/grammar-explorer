@@ -7,14 +7,21 @@
           :class="['group-' + i]"
           v-for="(group, i) in highlightedGroups"
         >
-          <div v-for="source in group.sources" v-html="source" class="whitespace-no-wrap"></div>
+          <div
+            v-for="source in group.sources"
+            v-html="source"
+            class="whitespace-no-wrap"
+          ></div>
         </div>
       </div>
     </template>
 
     <div v-else>None</div>
 
-    <div v-if="warnings.length > 0" class="bg-gray-200 text-sm mt-2 p-2 whitespace-no-wrap table w-full">
+    <div
+      v-if="warnings.length > 0"
+      class="bg-gray-200 text-sm mt-2 p-2 whitespace-no-wrap table w-full"
+    >
       <div v-for="warning in warnings">⚠️ {{ warning }}</div>
     </div>
   </div>
@@ -22,7 +29,7 @@
 
 <script>
 function escapeTags(string) {
-  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 export default {
@@ -34,38 +41,40 @@ export default {
 
   computed: {
     hasGroups() {
-      return this.prefixes.exist
+      return this.prefixes.exist;
     },
 
     groups() {
-      return this.prefixes.prefixes
+      return this.prefixes.prefixes;
     },
 
     highlightedGroups() {
-      return this.groups.map(group => {
-        const common = group.common.trim()
+      return this.groups.map((group) => {
+        const common = group.common.trim();
 
         return {
-          sources: group.sources.map(source => {
-            return escapeTags(source.replace(common, '{{mark}}'))
-              .replace('{{mark}}', `<mark>${escapeTags(common)}</mark>`)
+          sources: group.sources.map((source) => {
+            return escapeTags(source.replace(common, '{{mark}}')).replace(
+              '{{mark}}',
+              `<mark>${escapeTags(common)}</mark>`
+            );
           }),
-        }
-      })
+        };
+      });
     },
 
     warnings() {
-      return this.prefixes.warnings
+      return this.prefixes.warnings;
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
 .prefix-group {
   &:last-child {
-    padding-right: 18px!important;
-    border-right: none!important;
+    padding-right: 18px !important;
+    border-right: none !important;
   }
 }
 </style>

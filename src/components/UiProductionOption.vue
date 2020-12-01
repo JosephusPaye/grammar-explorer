@@ -5,10 +5,8 @@
         :element="element"
         :is-selected="element === selectedElement"
         :key="element.id"
-
         @select="selectElement"
         @deselect="deselectElement"
-
         v-for="element in option.elements"
       ></ui-production-element>
     </div>
@@ -16,15 +14,14 @@
     <ui-non-terminal
       :nonTerminal="selectedElement"
       :style="{ 'margin-left': `${selectedElementOffset}px` }"
-
       v-if="isSelected && selectedElement !== undefined"
     ></ui-non-terminal>
   </div>
 </template>
 
 <script>
-import { NonTerminal, ProductionOption } from '../grammar/models'
-import UiProductionElement from './UiProductionElement.vue'
+import { NonTerminal, ProductionOption } from '../grammar/models';
+import UiProductionElement from './UiProductionElement.vue';
 
 export default {
   name: 'UiProductionOption',
@@ -43,20 +40,20 @@ export default {
 
   methods: {
     selectElement(offset, element) {
-      this.$emit('select', offset, element, this.option)
+      this.$emit('select', offset, element, this.option);
     },
 
     deselectElement(element) {
-      this.$emit('deselect', element, this.option)
-    }
-  }
-}
+      this.$emit('deselect', element, this.option);
+    },
+  },
+};
 </script>
 
 <style lang="scss">
 .option {
   &:last-child {
-    margin-right: 0!important;
+    margin-right: 0 !important;
   }
 }
 </style>

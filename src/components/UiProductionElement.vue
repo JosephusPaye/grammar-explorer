@@ -1,16 +1,15 @@
 <template>
   <component
     class="element mr-1 bg-blue-200 px-1"
-
     :class="classes"
     :is="type === 'non-terminal' ? 'button' : 'span'"
-
     @click="toggleSelect"
-  >{{ element.value }}</component>
+    >{{ element.value }}</component
+  >
 </template>
 
 <script>
-import { NonTerminal, Terminal, Epsilon } from '../grammar/models'
+import { NonTerminal, Terminal, Epsilon } from '../grammar/models';
 
 export default {
   name: 'UiProductionElement',
@@ -23,27 +22,24 @@ export default {
   computed: {
     type() {
       if (this.element.isNonTerminal()) {
-        return 'non-terminal'
+        return 'non-terminal';
       }
 
       if (this.element.isTerminal()) {
-        return 'terminal'
+        return 'terminal';
       }
 
       if (this.element.isEpsilon()) {
-        return 'epsilon'
+        return 'epsilon';
       }
 
-      console.error(this.element)
-      const err = new Error('Invalid element type')
-      throw err
+      console.error(this.element);
+      const err = new Error('Invalid element type');
+      throw err;
     },
 
     classes() {
-      return [
-        'element--' + this.type,
-        { selected: this.isSelected },
-      ]
+      return ['element--' + this.type, { selected: this.isSelected }];
     },
   },
 
@@ -51,23 +47,23 @@ export default {
     toggleSelect(e) {
       if (this.element.isNonTerminal()) {
         if (this.isSelected) {
-          this.$emit('deselect', this.element)
+          this.$emit('deselect', this.element);
         } else {
-          this.$emit('select', e.target.offsetLeft, this.element)
+          this.$emit('select', e.target.offsetLeft, this.element);
         }
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
 .element {
-  outline: none!important;
+  outline: none !important;
   white-space: nowrap;
 
   &:last-child {
-    margin-right: 0!important;
+    margin-right: 0 !important;
   }
 
   &.element--terminal,

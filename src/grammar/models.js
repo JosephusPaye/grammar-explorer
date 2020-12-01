@@ -1,117 +1,117 @@
-import { EnhancedSet } from './enhanced-set'
+import { EnhancedSet } from './enhanced-set';
 
-let currentId = 0
+let currentId = 0;
 
 function nextId() {
-  return currentId++
+  return currentId++;
 }
 
 export class Production {
   constructor(source = '') {
-    this.id = nextId()
-    this.source = source
-    this.options = []
+    this.id = nextId();
+    this.source = source;
+    this.options = [];
   }
 }
 
-window.GProduction = Production
+window.GProduction = Production;
 
 export class ProductionOption {
   constructor() {
-    this.id = nextId()
-    this.elements = []
+    this.id = nextId();
+    this.elements = [];
   }
 }
 
-window.GProductionOption = ProductionOption
+window.GProductionOption = ProductionOption;
 
 export class Element {
   constructor() {
-    this.id = nextId()
+    this.id = nextId();
   }
 
   equals(otherElement) {
     if (this instanceof Epsilon) {
-      return otherElement instanceof Epsilon
+      return otherElement instanceof Epsilon;
     }
 
-    return this.value === otherElement.value
+    return this.value === otherElement.value;
   }
 
   isTerminal() {
-    return this instanceof Terminal
+    return this instanceof Terminal;
   }
 
   isNonTerminal() {
-    return this instanceof NonTerminal
+    return this instanceof NonTerminal;
   }
 
   isEpsilon() {
-    return this instanceof Epsilon
+    return this instanceof Epsilon;
   }
 }
 
-window.GElement = Element
+window.GElement = Element;
 
 export class NonTerminal extends Element {
   constructor(value = '') {
-    super()
+    super();
 
-    this.value = value
-    this.productions = []
-    this.isStartSymbol = false
-    this.isNullable = false
+    this.value = value;
+    this.productions = [];
+    this.isStartSymbol = false;
+    this.isNullable = false;
 
     this.leftRecursion = {
       exists: false,
       path: 'None',
-    }
+    };
 
     this.rightRecursion = {
       exists: false,
       path: 'None',
-    }
+    };
 
     this.commonPrefixes = {
       exist: false,
       prefixes: [],
       warnings: [],
-    }
+    };
 
-    this.firstSet = new EnhancedSet()
-    this.firstSetWarnings = []
+    this.firstSet = new EnhancedSet();
+    this.firstSetWarnings = [];
 
-    this.followSet = new EnhancedSet()
-    this.followSetWarnings = []
+    this.followSet = new EnhancedSet();
+    this.followSetWarnings = [];
   }
 
   allProductions() {
-    let productions = []
+    let productions = [];
 
-    this.productions.forEach(production => {
-      productions = productions.concat(production.options)
-    })
+    this.productions.forEach((production) => {
+      productions = productions.concat(production.options);
+    });
 
-    return productions
+    return productions;
   }
 }
 
-window.GNonTerminal = NonTerminal
+window.GNonTerminal = NonTerminal;
 
 export class Terminal extends Element {
   constructor(value = '') {
-    super()
-    this.value = value
+    super();
+    this.value = value;
   }
 }
 
-window.GTerminal = Terminal
+window.GTerminal = Terminal;
 
 export class Epsilon extends Element {
   constructor() {
-    super()
-    this.value = 'ε'
+    super();
+    this.value = 'ε';
   }
 }
 
-window.GEpsilon = Epsilon
+window.GEpsilon = Epsilon;

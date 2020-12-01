@@ -5,10 +5,10 @@
 </template>
 
 <script>
-let currentId = 0
+let currentId = 0;
 
 function nextId() {
-  return currentId++
+  return currentId++;
 }
 
 export default {
@@ -22,8 +22,8 @@ export default {
     id: {
       type: String,
       default() {
-        return `tab-${nextId()}`
-      }
+        return `tab-${nextId()}`;
+      },
     },
     selected: {
       type: Boolean,
@@ -33,7 +33,7 @@ export default {
 
   computed: {
     isSelected() {
-      return this.tabContext.selectedTabId === this.id
+      return this.tabContext.selectedTabId === this.id;
     },
   },
 
@@ -43,13 +43,13 @@ export default {
       label: this.label,
       title: this.title,
       selected: this.selected,
-    })
+    });
   },
 
   watch: {
     label(newLabel) {
-      this.$parent.changeLabel(this.id, newLabel)
+      this.$parent.changeLabel(this.id, newLabel);
     },
   },
-}
+};
 </script>

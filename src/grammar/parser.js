@@ -1,120 +1,137 @@
-import { Production, ProductionOption, NonTerminal, Terminal, Epsilon } from './models'
+import {
+  Production,
+  ProductionOption,
+  NonTerminal,
+  Terminal,
+  Epsilon,
+} from './models';
 
 export function parse(text, label) {
   if (text.trim().length == 0) {
-    return {}
+    return {};
   }
 
-  const grammar = {}
+  const grammar = {};
 
-  const rules = text.trim()
+  const rules = text
+    .trim()
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0 && !line.startsWith('//'))
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
 
-  rules.forEach(rule => {
-    const [nonTerminal, production] = rule.split('::=').map(part => part.trim())
+  rules.forEach((rule) => {
+    const [nonTerminal, production] = rule
+      .split('::=')
+      .map((part) => part.trim());
 
-    const options = production.split('|')
-      .map(option => option.trim())
-      .map(parseOption)
+    const options = production
+      .split('|')
+      .map((option) => option.trim())
+      .map(parseOption);
 
-    appendProduction(grammar, nonTerminal, production, options)
-  })
+    appendProduction(grammar, nonTerminal, production, options);
+  });
 
   Object.values(grammar).forEach((nonTerminal, i) => {
-    nonTerminal.isStartSymbol = i === 0
+    nonTerminal.isStartSymbol = i === 0;
 
-    nonTerminal.allProductions().forEach(production => {
+    nonTerminal.allProductions().forEach((production) => {
       production.elements.forEach((element, i) => {
         if (element.isNonTerminal()) {
-          production.elements[i] = grammar[element.value]
+          production.elements[i] = grammar[element.value];
         }
-      })
-    })
-  })
+      });
+    });
+  });
 
-  return grammar
+  return grammar;
 }
 
-function appendProduction(grammar, nonTerminalLabel, productionSource, productionOptions) {
-  const nonTerminal = grammar[nonTerminalLabel] !== undefined
-    ? grammar[nonTerminalLabel]
-    : new NonTerminal(nonTerminalLabel)
+function appendProduction(
+  grammar,
+  nonTerminalLabel,
+  productionSource,
+  productionOptions
+) {
+  const nonTerminal =
+    grammar[nonTerminalLabel] !== undefined
+      ? grammar[nonTerminalLabel]
+      : new NonTerminal(nonTerminalLabel);
 
-  const production = new Production(productionSource)
-  production.options = productionOptions
+  const production = new Production(productionSource);
+  production.options = productionOptions;
 
-  nonTerminal.productions.push(production)
+  nonTerminal.productions.push(production);
 
-  grammar[nonTerminalLabel] = nonTerminal
+  grammar[nonTerminalLabel] = nonTerminal;
 }
 
 function parseOption(source) {
-  const option = new ProductionOption()
+  const option = new ProductionOption();
 
-  source.split(' ')
-    .map(element => element.trim())
+  source
+    .split(' ')
+    .map((element) => element.trim())
     .map(parseElement)
-    .forEach(elements => {
-      option.elements = option.elements.concat(elements)
-    })
+    .forEach((elements) => {
+      option.elements = option.elements.concat(elements);
+    });
 
-  return option
+  return option;
 }
 
 function parseElement(source) {
   if (source == 'ε' || source == '\\e') {
-    return [new Epsilon()]
+    return [new Epsilon()];
   }
 
   if (source.length <= 2) {
-    return [new Terminal(source)]
+    return [new Terminal(source)];
   }
 
-  const elementArr = source.split('')
-  const elements = []
+  const elementArr = source.split('');
+  const elements = [];
 
   while (elementArr.length > 0) {
-    const current = elementArr.shift()
+    const current = elementArr.shift();
 
     if (current == '<') {
-      elements.push(extractNonTerminalFromElement(current, elementArr))
+      elements.push(extractNonTerminalFromElement(current, elementArr));
     } else {
-      elements.push(extractTerminalFromElement(current, elementArr))
+      elements.push(extractTerminalFromElement(current, elementArr));
     }
   }
 
-  return elements
+  return elements;
 }
 
 function extractTerminalFromElement(current, elementArr) {
-  let terminal = current
+  let terminal = current;
 
   while (elementArr.length > 0) {
     if (elementArr[0] == ' ') {
-      return new Terminal(terminal)
+      return new Terminal(terminal);
     } else if (elementArr[0] == '<') {
-      return new Terminal(terminal)
+      return new Terminal(terminal);
     }
 
-    terminal += elementArr.shift()
+    terminal += elementArr.shift();
   }
 
-  return new Terminal(terminal)
+  return new Terminal(terminal);
 }
 
 function extractNonTerminalFromElement(current, elementArr) {
-  let nonTerminal = current
+  let nonTerminal = current;
 
   while (elementArr.length > 0) {
     if (elementArr[0] == '>') {
-      nonTerminal += elementArr.shift()
-      return new NonTerminal(nonTerminal)
+      nonTerminal += elementArr.shift();
+      return new NonTerminal(nonTerminal);
     }
 
-    nonTerminal += elementArr.shift()
+    nonTerminal += elementArr.shift();
   }
 
-  throw new Error('GrammarParseError: incomplete non terminal: ' + nonTerminal)
+  throw new Error('GrammarParseError: incomplete non terminal: ' + nonTerminal);
 }

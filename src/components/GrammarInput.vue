@@ -5,10 +5,8 @@
       placeholder="Enter grammar with each rule on a newline line in the form: <non-terminal> ::= expansion a | expansion b"
       rows="12"
       ref="input"
-
-      :class="{'border-red-500': invalid }"
+      :class="{ 'border-red-500': invalid }"
       :value="value"
-
       @input="$emit('input', $event.target.value)"
       spellcheck="false"
     ></textarea>
@@ -17,7 +15,9 @@
       class="absolute top-0 right-0 mt-1 mr-6 text-sm leading-none py-1 px-2 bg-blue-200 border border-blue-300 opacity-50 hover:opacity-100 focus:opacity-100"
       @click="$emit('reset')"
       @click.ctrl="$emit('reset', true)"
-    >Load CD19</button>
+    >
+      Load CD19
+    </button>
   </div>
 </template>
 
@@ -32,14 +32,14 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.$refs.input.setSelectionRange(0, 0)
-    })
+      this.$refs.input.setSelectionRange(0, 0);
+    });
   },
 
   methods: {
     focus() {
-      this.$refs.input && this.$refs.input.focus()
+      this.$refs.input && this.$refs.input.focus();
     },
   },
-}
+};
 </script>

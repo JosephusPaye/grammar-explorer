@@ -7,7 +7,7 @@
       title="Alt + S"
       ref="input"
       v-model="filter"
-    >
+    />
 
     <div v-if="filteredLines.length > 0" class="flex-grow overflow-y-auto">
       <div
@@ -18,36 +18,34 @@
       ></div>
     </div>
 
-    <div v-else>
-      No matching lines
-    </div>
+    <div v-else>No matching lines</div>
   </div>
 </template>
 
 <script>
 function escapeTags(string) {
-  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function findMatch(string, target) {
-  const index = string.toLowerCase().indexOf(target)
+  const index = string.toLowerCase().indexOf(target);
 
   if (index !== -1) {
     return {
       index,
       value: string.substr(index, target.length),
-    }
+    };
   }
 
-  return null
+  return null;
 }
 
 function escapeForRegex(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function replaceAll(string, target, replacement) {
-  return string.replace(new RegExp(escapeForRegex(target), 'g'), replacement)
+  return string.replace(new RegExp(escapeForRegex(target), 'g'), replacement);
 }
 
 export default {
@@ -60,16 +58,16 @@ export default {
   data() {
     return {
       filter: '',
-    }
+    };
   },
 
   computed: {
     lines() {
-      return this.grammar.split('\n').map(line => line.trim())
+      return this.grammar.split('\n').map((line) => line.trim());
     },
 
     filteredLines() {
-      return this.lines.map(this.findMatches).filter(line => line.matches)
+      return this.lines.map(this.findMatches).filter((line) => line.matches);
     },
   },
 
@@ -79,49 +77,59 @@ export default {
         highlighted: line,
         highlights: [],
         matches: false,
-      }
+      };
 
       if (this.filter.trim()) {
-        const lineLowerCase = line.toLowerCase()
+        const lineLowerCase = line.toLowerCase();
         const targets = this.filter
           .trim()
           .toLowerCase()
           .split(',')
-          .map(target => target.trim())
-          .filter(target => target.length > 0)
+          .map((target) => target.trim())
+          .filter((target) => target.length > 0);
 
         targets.forEach((target, i) => {
-          const match = findMatch(line, target)
+          const match = findMatch(line, target);
 
           if (match) {
-            result.matches = true
+            result.matches = true;
 
-            const placeholder = `{{MATCH_${i}}}`
-            result.highlighted = replaceAll(result.highlighted, match.value, placeholder)
+            const placeholder = `{{MATCH_${i}}}`;
+            result.highlighted = replaceAll(
+              result.highlighted,
+              match.value,
+              placeholder
+            );
 
             result.highlights.push({
               placeholder,
-              replacement: `<mark class="is-${i}">${escapeTags(match.value)}</mark>`,
-            })
+              replacement: `<mark class="is-${i}">${escapeTags(
+                match.value
+              )}</mark>`,
+            });
           }
-        })
+        });
 
-        result.highlighted = escapeTags(result.highlighted)
+        result.highlighted = escapeTags(result.highlighted);
 
         result.highlights.forEach(({ placeholder, replacement }) => {
-          result.highlighted = replaceAll(result.highlighted, placeholder, replacement)
-        })
+          result.highlighted = replaceAll(
+            result.highlighted,
+            placeholder,
+            replacement
+          );
+        });
       } else {
-        result.highlighted = escapeTags(result.highlighted)
-        result.matches = true
+        result.highlighted = escapeTags(result.highlighted);
+        result.matches = true;
       }
 
-      return result
+      return result;
     },
 
     focus() {
-      this.$refs.input && this.$refs.input.focus()
+      this.$refs.input && this.$refs.input.focus();
     },
   },
-}
+};
 </script>

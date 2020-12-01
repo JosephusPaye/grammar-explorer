@@ -60,7 +60,7 @@ export const CD19 = `
 <intlit>      ::=  42
 <reallit>     ::=  0.0000001000000100000110
 <string>      ::=  "oh hai mark"
-`.trim()
+`.trim();
 
 export const CD19NodeRules = `
 <program>     ::=  CD19 <id> <globals> <funcs> <mainbody>
@@ -159,7 +159,7 @@ export const CD19NodeRules = `
 <intlit>      ::=  16
 <reallit>     ::=  0.01
 <string>      ::=  "string"
-`.trim()
+`.trim();
 
 export const CircularLeftRecursion = `
 <a> ::= <b> <a> | a | ε
@@ -167,7 +167,7 @@ export const CircularLeftRecursion = `
 <c> ::= c | ε | <d>
 <d> ::= d | <a> d | <b> d | <e> | ε
 <e> ::= a <e> | e | ε
-`.trim()
+`.trim();
 
 export const FirstAndFollow = `
 <E> ::= <T> <E'>
@@ -178,7 +178,7 @@ export const FirstAndFollow = `
 <T'> ::= ε
 <F> ::= ( <E> )
 <F> ::= id
-`.trim()
+`.trim();
 
 export const FirstAndFollow2 = `
 <S> ::= <A> <B> <C> | <A> <D>
@@ -186,4 +186,4 @@ export const FirstAndFollow2 = `
 <B> ::= b | c | ε
 <C> ::= <D> d <C>
 <D> ::= e b | f c
-`.trim()
+`.trim();

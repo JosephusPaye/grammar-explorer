@@ -35,7 +35,8 @@
         class="absolute top-0 right-0 bg-red-200 mt-1 mr-2 text-sm leading-none py-1 px-2"
         href="mailto:c3211849@uon.edu.au"
         title="Email me at c3211849@uon.edu.au"
-      >🐞 Found an issue?</a>
+        >🐞 Found an issue?</a
+      >
     </div>
 
     <div class="separator">
@@ -45,7 +46,21 @@
         :disabled="layout === 'left-maximised'"
         @click="updateLayout('expand-left')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-down"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-chevrons-down"
+        >
+          <polyline points="7 13 12 18 17 13"></polyline>
+          <polyline points="7 6 12 11 17 6"></polyline>
+        </svg>
       </button>
 
       <button
@@ -54,7 +69,21 @@
         :disabled="layout === 'right-maximised'"
         @click="updateLayout('expand-right')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-chevrons-up"
+        >
+          <polyline points="17 11 12 6 7 11"></polyline>
+          <polyline points="17 18 12 13 7 18"></polyline>
+        </svg>
       </button>
     </div>
 
@@ -69,50 +98,50 @@
 </template>
 
 <script>
-import debounce from 'debounce'
-import { parse, CD19, CD19NodeRules } from './grammar'
-import { addShortcut } from './shortcuts'
-import GrammarInput from './components/GrammarInput.vue'
-import GrammarAnalysis from './components/GrammarAnalysis.vue'
-import GrammarExplorer from './components/GrammarExplorer.vue'
-import GrammarSearch from './components/GrammarSearch.vue'
-import UiTabs from './components/UiTabs.vue'
-import UiTab from './components/UiTab.vue'
+import debounce from 'debounce';
+import { parse, CD19, CD19NodeRules } from './grammar';
+import { addShortcut } from './shortcuts';
+import GrammarInput from './components/GrammarInput.vue';
+import GrammarAnalysis from './components/GrammarAnalysis.vue';
+import GrammarExplorer from './components/GrammarExplorer.vue';
+import GrammarSearch from './components/GrammarSearch.vue';
+import UiTabs from './components/UiTabs.vue';
+import UiTab from './components/UiTab.vue';
 
-const localStorageLayoutKey = 'grammar-explorer:layout'
+const localStorageLayoutKey = 'grammar-explorer:layout';
 
 function getDefaultLayout() {
-  const previousLayout = localStorage.getItem(localStorageLayoutKey)
-  return previousLayout ? previousLayout : 'default'
+  const previousLayout = localStorage.getItem(localStorageLayoutKey);
+  return previousLayout ? previousLayout : 'default';
 }
 
-const persistLayout = debounce(layout => {
+const persistLayout = debounce((layout) => {
   if (layout) {
-    localStorage.setItem(localStorageLayoutKey, layout)
+    localStorage.setItem(localStorageLayoutKey, layout);
   }
-}, 200)
+}, 200);
 
-const localStorageInputKey = 'grammar-explorer:input'
+const localStorageInputKey = 'grammar-explorer:input';
 
 function getDefaultInput() {
-  const previousInput = localStorage.getItem(localStorageInputKey)
-  return previousInput ? previousInput : CD19
+  const previousInput = localStorage.getItem(localStorageInputKey);
+  return previousInput ? previousInput : CD19;
 }
 
-const persistInput = debounce(input => {
+const persistInput = debounce((input) => {
   if (input) {
-    localStorage.setItem(localStorageInputKey, input)
+    localStorage.setItem(localStorageInputKey, input);
   }
-}, 200)
+}, 200);
 
 const parseGrammar = debounce((input, label, callback) => {
   try {
-    const grammar = parse(input, label)
-    callback({ valid: true, grammar })
+    const grammar = parse(input, label);
+    callback({ valid: true, grammar });
   } catch (err) {
-    callback({ valid: false, err })
+    callback({ valid: false, err });
   }
-}, 200)
+}, 200);
 
 export default {
   name: 'app',
@@ -133,60 +162,61 @@ export default {
       grammar: undefined,
       layout: getDefaultLayout(),
       cleanupShortcuts: null,
-    }
+    };
   },
 
   watch: {
     grammarText(input) {
-      this.parseGrammar()
-      persistInput(input)
+      this.parseGrammar();
+      persistInput(input);
     },
 
     layout(layout) {
-      persistLayout(layout)
+      persistLayout(layout);
     },
   },
 
   mounted() {
-    this.parseGrammar()
-    this.registerShortcuts()
+    this.parseGrammar();
+    this.registerShortcuts();
   },
 
   beforeDestroy() {
-    this.cleanupShortcuts && this.cleanupShortcuts()
+    this.cleanupShortcuts && this.cleanupShortcuts();
   },
 
   methods: {
     parseGrammar() {
-      parseGrammar(this.grammarText, 'input grammar', this.onGrammarParse)
+      parseGrammar(this.grammarText, 'input grammar', this.onGrammarParse);
     },
 
     onGrammarParse({ grammar, valid, err }) {
       if (valid) {
-        this.grammar = grammar
-        this.grammarInvalid = false
-        window.grammar = grammar
+        this.grammar = grammar;
+        this.grammarInvalid = false;
+        window.grammar = grammar;
       } else {
         // console.error(err)
-        this.grammarInvalid = true
+        this.grammarInvalid = true;
       }
     },
 
     resetGrammar(useNodeGrammar = false) {
-      this.grammarText = useNodeGrammar ? CD19NodeRules : CD19
+      this.grammarText = useNodeGrammar ? CD19NodeRules : CD19;
     },
 
     updateLayout(action) {
       switch (this.layout) {
         case 'default':
-          this.layout = action === 'expand-left' ? 'left-maximised' : 'right-maximised'
-          break
+          this.layout =
+            action === 'expand-left' ? 'left-maximised' : 'right-maximised';
+          break;
         case 'left-maximised':
-          this.layout = action === 'expand-left' ? this.layout : 'default'
-          break
+          this.layout = action === 'expand-left' ? this.layout : 'default';
+          break;
         case 'right-maximised':
-          this.layout = action === 'expand-left' ? 'default' : this.layout
-          break
+          this.layout = action === 'expand-left' ? 'default' : this.layout;
+          break;
       }
     },
 
@@ -196,42 +226,43 @@ export default {
         ['KeyI', 'KeyS', 'KeyX', 'KeyN', 'ArrowUp', 'ArrowDown', 'Slash'],
         (e) => {
           if (e.code === 'KeyI') {
-            this.switchToTab('input')
-            this.focus('grammarInput')
+            this.switchToTab('input');
+            this.focus('grammarInput');
           } else if (e.code === 'KeyS') {
-            this.switchToTab('search')
-            this.focus('grammarSearch')
+            this.switchToTab('search');
+            this.focus('grammarSearch');
           } else if (e.code === 'KeyX') {
-            this.switchToTab('explore')
+            this.switchToTab('explore');
           } else if (e.code === 'KeyN') {
-            this.switchToTab('explore')
-            this.focus('grammarExplorer')
+            this.switchToTab('explore');
+            this.focus('grammarExplorer');
           } else if (e.code === 'Slash') {
             // Reveal the analysis if it's hidden
-            this.layout === 'left-maximised' && this.updateLayout('expand-right')
-            this.focus('grammarAnalysis')
+            this.layout === 'left-maximised' &&
+              this.updateLayout('expand-right');
+            this.focus('grammarAnalysis');
           } else if (e.code === 'ArrowUp') {
-            this.updateLayout('expand-right')
+            this.updateLayout('expand-right');
           } else if (e.code === 'ArrowDown') {
-            this.updateLayout('expand-left')
+            this.updateLayout('expand-left');
           }
         }
-      )
+      );
     },
 
     switchToTab(tabId, focusRef) {
       if (this.$refs.tabs) {
-        this.$refs.tabs.selectId(tabId)
+        this.$refs.tabs.selectId(tabId);
       }
     },
 
     focus(ref) {
       this.$nextTick(() => {
-        this.$refs[ref] && this.$refs[ref].focus()
-      })
+        this.$refs[ref] && this.$refs[ref].focus();
+      });
     },
   },
-}
+};
 </script>
 
 <style src="./assets/tailwind.css"></style>
@@ -315,7 +346,7 @@ mark {
 
   .group-2 &,
   &.is-2 {
-    background-color: highlight-color(#e6194B);
+    background-color: highlight-color(#e6194b);
   }
 
   .group-3 &,
@@ -365,7 +396,7 @@ mark {
 
   .group-12 &,
   &.is-12 {
-    background-color: highlight-color(#9A6324);
+    background-color: highlight-color(#9a6324);
   }
 
   .group-13 &,
